@@ -121,11 +121,11 @@ namespace OnlineShop.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Some Thing went wrong While signing in for {userDTO.Username} +  ", ex);
+                _logger.LogError($"Some Thing went wrong While Registeration in for {userDTO.Username} +  ", ex);
                 return new BaseResponseDTO
                 {
                     IsSuccessed = false,
-                    Message = "Some Thing went wrong While signing in",
+                    Message = "Some Thing went wrong While Registeration",
                 };
             }
 

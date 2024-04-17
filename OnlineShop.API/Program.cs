@@ -7,6 +7,7 @@ using OnlineShop.Core.Interfaces;
 using OnlineShop.Core.IServices;
 using OnlineShop.Core.Settings;
 using OnlineShop.Infrastructure.Data;
+using OnlineShop.Infrastructure.DataSeeding;
 using OnlineShop.Infrastructure.Persistence;
 using OnlineShop.Services;
 using Serilog;
@@ -23,7 +24,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
 
-// ______________________________ Sql Confs_________________________________//
+
+# region DbContext
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options =>
@@ -32,9 +35,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     });
 // ______________________________ End Sql Conf_________________________________//
+# endregion
 
+# region   Dependancy Injection
 
-// ______________________________ Dependancy Injections _________________________________//
 builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -42,12 +46,10 @@ builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IRoleServices, RoleServices>();
 
 
+# endregion
 
-// ______________________________ End Dependancy Injections _________________________________//
+# region Identity
 
-
-
-// ______________________________ Identity Confs _________________________________//
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
@@ -63,8 +65,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
 
 
 // ------------------------------------------------------- //
+# endregion
 
-// ------------------------- JwtBearer Conf ----------------------//
+# region JwtBearer
 
 builder.Services.AddAuthentication(
     options =>
@@ -87,25 +90,46 @@ builder.Services.AddAuthentication(
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SECRETKEY"]))
         };
     });
-
 // ------------------------------------------------------- //
 
-// ------------------------- Other Confs ----------------------//
+# endregion
 
-// Logger
+
+#region Other Confs
+
 var logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
 
 builder.Logging.AddSerilog(logger);
+# endregion
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+
+#region Data Seeding
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+
+var authService = services.GetRequiredService<IAuthServices>();
+var roleService = services.GetRequiredService<IRoleServices>();
+
+if (!roleService.AllRoles().Result.Any())
+{
+    await SeedRoles.SeedDefaultRolesAsync(roleService);
+    await SeedUsers.SeedDefaultUsersAsync(authService, roleService);
+}
+
+#endregion
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
 
 app.UseHttpsRedirection();
 

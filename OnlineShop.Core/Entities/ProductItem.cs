@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Core.Entities
 {
-    public class ProductItem
+    public class ProductItem : BaseEntity
     {
         public string ProductId { get; set; }
         public Product Product { get; set; }

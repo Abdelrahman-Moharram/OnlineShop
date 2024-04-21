@@ -6,48 +6,48 @@ using System.Linq.Expressions;
 
 namespace OnlineShop.Core.Persistence
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class BaseRepository<T> : IRepository<T> where T : class
     {
         private ApplicationDbContext _context;
         private DbSet<T> _entity;
-        public Repository(ApplicationDbContext context)
+        public BaseRepository(ApplicationDbContext context)
         {
             _context = context;
-            _entity = _entity; // should be any type of dbtable class
+            _entity = _context.Set<T>(); // should be any type of dbtable class
         }
 
-        private IQueryable<T> HandleIncludes(IQueryable<T> query, string[] includes = null, bool IgnoreGlobalFilters = false)
+        private IQueryable<T> HandleIncludes(IQueryable<T> query, string[] includes = null, bool IgnoreGlobalFilters = false, Expression<Func<T, T>> select = null)
         {
             if (includes != null)
                 foreach (var include in includes)
                     query = query.Include(include).AsNoTracking();
             if (IgnoreGlobalFilters)
                 query = query.IgnoreQueryFilters();
-
-
+            if(select != null)
+                return query.Select(select);
             return query;
         }
 
 
-        public async ValueTask AddAsync(T entity)
+        public async Task AddAsync(T entity)
         {
             await _entity.AddAsync(entity);
         }
 
-        public async ValueTask<T> GetById(string id)
+        public async Task<T> GetById(string id)
         {
             return await _entity.FindAsync(id);
         }
 
 
-        public async ValueTask<IEnumerable<T>> GetAllAsync(string[] includes = null, bool IgnoreGlobalFilters = false)
+        public async Task<IEnumerable<T>> GetAllAsync(string[] includes = null, bool IgnoreGlobalFilters = false, Expression<Func<T, T>> select = null)
         {
-            return await HandleIncludes(_entity, includes, IgnoreGlobalFilters).ToListAsync();
+            return await HandleIncludes(_entity, includes, IgnoreGlobalFilters, select).ToListAsync();
         }
 
 
 
-        public async ValueTask DeleteAsync(string id)
+        public async Task DeleteAsync(string id)
         {
             var entity = await _entity.FindAsync(id);
             if(entity != null)
@@ -58,7 +58,7 @@ namespace OnlineShop.Core.Persistence
             _entity.Remove(entity);
         }
 
-        public async ValueTask<T> FindAsync(
+        public async Task<T> FindAsync(
             Expression<Func<T, bool>> expression, 
             string[] includes = null, 
             bool IgnoreGlobalFilters = false
@@ -67,7 +67,7 @@ namespace OnlineShop.Core.Persistence
             return await HandleIncludes(_entity, includes, IgnoreGlobalFilters).SingleOrDefaultAsync(expression);
         }
 
-        public async ValueTask<IEnumerable<T>> FindAllAsync(
+        public async Task<IEnumerable<T>> FindAllAsync(
             Expression<Func<T, bool>> expression,
             int? take = null,
             int? skip = null,

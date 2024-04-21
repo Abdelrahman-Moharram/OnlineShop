@@ -4,16 +4,20 @@ namespace OnlineShop.Core.Interfaces
 {
     public interface IRepository <T> where T : class
     {
-        ValueTask<IEnumerable<T>> GetAllAsync(string[] includes = null, bool IgnoreGlobalFilters = false);
-        ValueTask<T> GetById(string id);
-        ValueTask AddAsync (T entity);
+        Task<IEnumerable<T>> GetAllAsync(
+            string[] includes = null, 
+            bool IgnoreGlobalFilters = false,
+            Expression<Func<T, T>> Select = null
+            );
+        Task<T> GetById(string id);
+        Task AddAsync (T entity);
         void UpdateAsync (T entity);
-        ValueTask DeleteAsync (string id);
+        Task DeleteAsync (string id);
 
-        ValueTask<T> FindAsync(Expression<Func<T, bool>> expression,
+        Task<T> FindAsync(Expression<Func<T, bool>> expression,
             string[] includes = null,
             bool IgnoreGlobalFilters = false);
-        ValueTask<IEnumerable<T>> FindAllAsync(
+        Task<IEnumerable<T>> FindAllAsync(
             Expression<Func<T, bool>> expression,
             int? take = null,
             int? skip = null,

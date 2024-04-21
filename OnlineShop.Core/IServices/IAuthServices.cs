@@ -6,7 +6,11 @@ namespace OnlineShop.Core.IServices
     public interface IAuthServices
     {
         Task<ApplicationUser> AddUser(RegisterDTO userDTO);
-        Task<BaseResponseDTO> Register(RegisterDTO userDTO);
-        Task<BaseResponseDTO> Login(LoginDTO loginDTO);
+        Task<AuthResponseDTO> Register(RegisterDTO userDTO);
+        Task<AuthResponseDTO> Login(LoginDTO loginDTO);
+
+        Task<AuthResponseDTO> GenerateNewRefreshTokenAsync(string token);
+        Task<bool> RevokeTokenAsync(string token);
+
     }
 }

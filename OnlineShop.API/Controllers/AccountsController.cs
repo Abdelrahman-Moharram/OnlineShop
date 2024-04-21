@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Core.DTOs.AuthDTOs;
 using OnlineShop.Core.DTOs.ResponsesDTOs;
@@ -16,30 +17,90 @@ namespace OnlineShop.API.Controllers
             _authService = authService;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO register)
         {
             if (ModelState.IsValid)
             {
-                BaseResponseDTO result = await _authService.Register(register);
-                if (result.IsSuccessed)
-                    return Ok(result);
-                return Unauthorized(result.Message);
-            }
-            return BadRequest(register);
-        }
+                var result = await _authService.Register(register);
+                if (!result.IsSuccessed)
+                    return BadRequest(result.Message);
 
+                SetRefreshTokenInCookies(result.RefreshToken, result.RefreshTokenExpiretion);
+                return Ok(result);
+            }
+            return BadRequest(ModelState);
+        }
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO login)
         {
             if (ModelState.IsValid)
             {
-                BaseResponseDTO result = await _authService.Login(login);
-                if (result.IsSuccessed)
-                    return Ok(result);
-                return Unauthorized(result.Message);
+                var result = await _authService.Login(login);
+                if (!result.IsSuccessed)
+                    return Unauthorized(result.Message);
+
+
+                SetRefreshTokenInCookies(result.RefreshToken, result.RefreshTokenExpiretion);
+                return Ok(result);
             }
-            return BadRequest(login);
+            return BadRequest(ModelState);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("refresh-token")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refresh_token"];
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized();
+            }
+            var result = await _authService.GenerateNewRefreshTokenAsync(refreshToken);
+            if (!result.IsSuccessed)
+                return BadRequest(result);
+
+            SetRefreshTokenInCookies(result.RefreshToken, result.RefreshTokenExpiretion);
+            return Ok(result);
+        }
+        
+        [AllowAnonymous]
+        [HttpGet("revoke-token")]
+        public async Task<IActionResult> RevokeToken()
+        {
+            var refreshToken = Request.Cookies["refresh_token"];
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized(new BaseResponseDTO
+                {
+                    Message = "Invalid Token"
+                });
+            }
+            var result = await _authService.RevokeTokenAsync(refreshToken);
+            if (!result)
+                return BadRequest(new BaseResponseDTO
+                {
+                    Message = "Invalid Token"
+                });
+
+            return Ok();
+        }
+
+        private void SetRefreshTokenInCookies(string RToken, DateTime RefreshTokenExpiretion)
+        {
+            CookieOptions cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = RefreshTokenExpiretion.ToLocalTime(),
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Path = "/",
+                IsEssential = true,
+            };
+
+            Response.Cookies.Append("refresh_token", RToken, cookieOptions);
         }
     }
 }

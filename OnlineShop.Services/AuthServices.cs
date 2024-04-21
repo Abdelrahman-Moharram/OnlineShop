@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +11,7 @@ using OnlineShop.Core.Settings;
 using OnlineShop.Infrastructure.Helper;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace OnlineShop.Services
@@ -47,7 +49,7 @@ namespace OnlineShop.Services
             return null;
         }
 
-        public async Task<BaseResponseDTO> Login(LoginDTO loginDTO)
+        public async Task<AuthResponseDTO> Login(LoginDTO loginDTO)
         {
             try
             {
@@ -58,29 +60,38 @@ namespace OnlineShop.Services
                 else
                     user = await _userManager.FindByNameAsync(loginDTO.Username);
 
-                if (user == null)
-                    return new BaseResponseDTO
+
+                if (user == null || ! await _userManager.CheckPasswordAsync(user, loginDTO.Password))
+                    return new AuthResponseDTO
                     {
                         IsSuccessed = false,
                         Message = "Username or Password is incorrect !"
                     };
-
                 JwtSecurityToken token = await CreateJWT(user);
 
-                return new AuthResponseDTO
+                var Response = new AuthResponseDTO
                 {
                     IsSuccessed = true,
                     Email = user.Email,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     UserName = user.UserName,
-                    Message = $"{user.UserName} Loogedin Successfully"
+                    Message = $"{user.UserName} Loggedin Successfully"
                 };
+                RefreshToken refreshtoken = GenerateRefreshToken();
+
+                Response.RefreshToken = refreshtoken.Token;
+                Response.RefreshTokenExpiretion = refreshtoken.ExpiresOn;
+                user.RefreshTokens?.Add(refreshtoken);
+                await _userManager.UpdateAsync(user);
+
+                return Response;
+
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Some Thing went wrong While signing in for {loginDTO.Username} +  ", ex);
-                return new BaseResponseDTO 
+                return new AuthResponseDTO
                 {
                     IsSuccessed = false,
                     Message = "Some Thing went wrong While signing in",
@@ -89,26 +100,29 @@ namespace OnlineShop.Services
                 
         }
 
-        public async Task<BaseResponseDTO> Register(RegisterDTO userDTO)
+        public async Task<AuthResponseDTO> Register(RegisterDTO userDTO)
         {
             try
             {
                 if (await _userManager.FindByNameAsync(userDTO.Username) != null)
-                    return new BaseResponseDTO { Message = userDTO.Username + " is already exists !" };
+                    return new AuthResponseDTO { Message = userDTO.Username + " is already exists !" };
 
                 if (await _userManager.FindByEmailAsync(userDTO.Email) != null)
-                    return new BaseResponseDTO { Message = userDTO.Email + " is already exists !" };
+                    return new AuthResponseDTO { Message = userDTO.Email + " is already exists !" };
 
 
                 ApplicationUser user = await AddUser(userDTO);
                 if (user == null)
-                    return new BaseResponseDTO { Message = $"something went wrong while creating {userDTO.Username}" };
+                    return new AuthResponseDTO { Message = $"something went wrong while creating {userDTO.Username}" };
 
                 var roleResult = await _userManager.AddToRoleAsync(user, "Basic");
                 if (!roleResult.Succeeded)
-                    return new BaseResponseDTO { Message = $"something went wrong while completing your account data" };
+                    return new AuthResponseDTO { Message = $"something went wrong while completing your account data" };
 
                 JwtSecurityToken token = await CreateJWT(user);
+                var refreshToken = GenerateRefreshToken();
+                user.RefreshTokens?.Add(refreshToken);
+                await _userManager.UpdateAsync(user);
 
                 return new AuthResponseDTO
                 {
@@ -116,19 +130,79 @@ namespace OnlineShop.Services
                     Message = "Account Created Successfully",
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Email = userDTO.Email,
-                    UserName = userDTO.Username
+                    UserName = userDTO.Username,
+                    RefreshToken = refreshToken?.Token,
+                    RefreshTokenExpiretion = refreshToken.ExpiresOn
                 };
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Some Thing went wrong While Registeration in for {userDTO.Username} +  ", ex);
-                return new BaseResponseDTO
+                return new AuthResponseDTO
                 {
                     IsSuccessed = false,
                     Message = "Some Thing went wrong While Registeration",
                 };
             }
 
+        }
+
+        public async Task<AuthResponseDTO> GenerateNewRefreshTokenAsync(string token)
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(u=>u.RefreshTokens.Any(t=>t.Token == token));
+            if(user == null)
+            {
+                return new AuthResponseDTO
+                {
+                    Message= "Invalid Token"
+                };
+            }
+
+            var refreshToken = user.RefreshTokens.Single(t=>t.Token == token);
+            if (!refreshToken.IsActive)
+            {
+                return new AuthResponseDTO
+                {
+                    Message = "Inactive Token"
+                };
+            }
+
+            refreshToken.RevokedOn = DateTime.UtcNow;
+            var newRefreshToken = GenerateRefreshToken();
+            user.RefreshTokens.Add(newRefreshToken);
+
+            await _userManager.UpdateAsync(user);
+
+            var accessToken = await CreateJWT(user);
+
+            return new AuthResponseDTO
+            {
+                Email = user.Email,
+                UserName = user.UserName,
+                IsSuccessed = true,
+                Token = new JwtSecurityTokenHandler().WriteToken(accessToken),
+                RefreshToken = newRefreshToken.Token,
+                RefreshTokenExpiretion = newRefreshToken.ExpiresOn,
+            };
+
+        }
+
+        public async Task<bool> RevokeTokenAsync(string token)
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
+            if (user == null)
+            {
+                return false;
+            }
+
+            var refreshToken = user.RefreshTokens.Single(t => t.Token == token);
+            if (!refreshToken.IsActive)
+            {
+                return false;
+            }
+            refreshToken.RevokedOn = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+            return true;
         }
 
 
@@ -151,8 +225,8 @@ namespace OnlineShop.Services
             var Claims = new List<Claim>
                 {
                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                       new Claim("username", user.UserName),
-                       new Claim("email", user.Email),
+                       new Claim("username", user?.UserName),
+                       new Claim("email", user?.Email),
                        new Claim(ClaimTypes.NameIdentifier, user.Id),
                        new Claim("userId", user.Id),
                 }
@@ -174,6 +248,19 @@ namespace OnlineShop.Services
                     audience: _jwt.Audience,
                     expires: DateTime.Now.AddMinutes(_jwt.DurationInMinutes)
                 );
+        }
+
+        private RefreshToken GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var generator = RandomNumberGenerator.Create();
+            generator.GetBytes(randomNumber);
+            return new RefreshToken
+            {
+                Token = Convert.ToBase64String(randomNumber),
+                ExpiresOn = DateTime.UtcNow.AddDays(10),
+                CreatedOn = DateTime.UtcNow
+            };
         }
     }
 }

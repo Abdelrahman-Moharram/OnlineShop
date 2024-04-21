@@ -38,7 +38,7 @@ namespace OnlineShop.Infrastructure.Data
             // Models Configurations
 
             new ApplicationUserConfigurations().Configure(builder.Entity<ApplicationUser>());
-            /*
+
             new CategoryConfigurations().Configure(builder.Entity<Category>());
             new ProductConfigurations().Configure(builder.Entity<Product>());
 
@@ -53,14 +53,14 @@ namespace OnlineShop.Infrastructure.Data
                 .HasForeignKey(i => i.ProductId);
 
             builder.Entity<UploadedFile>()
-                .HasQueryFilter(i => !i.IsDeleted);*/
+                .HasQueryFilter(i => !i.IsDeleted);
 
         }
 
-        /*DbSet<Brand> Brands { get; set; }
+        DbSet<Brand> Brands { get; set; }
         DbSet<Category> Categories { get; set; }
         DbSet<Product> Products { get; set; }
         DbSet<ProductItem> ProductItems { get; set; }
-        DbSet<UploadedFile> UploadedFiles { get; set; }*/
+        DbSet<UploadedFile> UploadedFiles { get; set; }
     }
 }

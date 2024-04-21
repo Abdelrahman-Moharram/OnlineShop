@@ -4,6 +4,7 @@ namespace OnlineShop.Core.Entities
 {
     public class ApplicationUser : IdentityUser
     {
+        public List<RefreshToken>? RefreshTokens { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

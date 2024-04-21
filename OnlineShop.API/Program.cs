@@ -8,6 +8,7 @@ using OnlineShop.Core.IServices;
 using OnlineShop.Core.Settings;
 using OnlineShop.Infrastructure.Data;
 using OnlineShop.Infrastructure.DataSeeding;
+using OnlineShop.Infrastructure.Mappers;
 using OnlineShop.Infrastructure.Persistence;
 using OnlineShop.Services;
 using Serilog;
@@ -18,7 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -45,6 +45,9 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IRoleServices, RoleServices>();
 
+
+builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 
 # endregion
 
@@ -97,10 +100,35 @@ builder.Services.AddAuthentication(
 
 #region Other Confs
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
 
 builder.Logging.AddSerilog(logger);
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin();
+                          policy.AllowAnyMethod();
+                          policy.AllowAnyHeader();
+                          policy.AllowCredentials();
+                          policy.WithOrigins("*");
+                          policy.SetIsOriginAllowed(origin => true); // allow any origin
+
+                      });
+});
+
+
+builder.Services.AddAutoMapper(typeof(ProductProfile));
+builder.Services.AddAutoMapper(typeof(CategoryProfile));
+
 # endregion
+
+
 
 
 var app = builder.Build();
@@ -133,6 +161,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
+
+app.UseStaticFiles();
+
+app.UseCors(MyAllowSpecificOrigins);
+
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

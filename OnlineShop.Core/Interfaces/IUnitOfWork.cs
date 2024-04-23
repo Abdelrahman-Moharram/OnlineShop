@@ -10,7 +10,9 @@ namespace OnlineShop.Core.Interfaces
         IRepository<Brand> Brands { get; }
         IRepository<Category> Categories { get; }
         IRepository<ProductItem> ProductItems { get; }
-        IRepository<UploadedFile> UploadedFiles { get; }
+        IRepository<ProductFile> ProductFiles { get; }
+        IRepository<Banner> Banners { get; }
+        IRepository<SiteSetting> SiteSettings { get; }
         Task<int> SaveAsync();
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineShop.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using OnlineShop.Infrastructure.Data;
 namespace OnlineShop.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240421210739_AddSiteSettingsEntityAndChangeUploadFiles")]
+    partial class AddSiteSettingsEntityAndChangeUploadFiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,7 +251,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("SiteSettingId");
 
-                    b.ToTable("Banners", (string)null);
+                    b.ToTable("Banners");
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.Brand", b =>
@@ -280,7 +283,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.Category", b =>
@@ -312,7 +315,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.Product", b =>
@@ -365,18 +368,13 @@ namespace OnlineShop.Infrastructure.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("discount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
-
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.ProductFile", b =>
@@ -404,7 +402,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductFiles", (string)null);
+                    b.ToTable("ProductFiles");
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.ProductItem", b =>
@@ -448,7 +446,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductItems", (string)null);
+                    b.ToTable("ProductItems");
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.SiteSetting", b =>
@@ -473,7 +471,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SiteSettings", (string)null);
+                    b.ToTable("SiteSettings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -529,7 +527,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineShop.Core.Entities.ApplicationUser", b =>
                 {
-                    b.OwnsMany("OnlineShop.Core.Entities.ApplicationUser.RefreshTokens#OnlineShop.Core.Entities.RefreshToken", "RefreshTokens", b1 =>
+                    b.OwnsMany("OnlineShop.Core.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<string>("ApplicationUserId")
                                 .HasColumnType("nvarchar(450)");
@@ -567,7 +565,7 @@ namespace OnlineShop.Infrastructure.Migrations
             modelBuilder.Entity("OnlineShop.Core.Entities.Banner", b =>
                 {
                     b.HasOne("OnlineShop.Core.Entities.SiteSetting", "SiteSetting")
-                        .WithMany("Images")
+                        .WithMany("Banner")
                         .HasForeignKey("SiteSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -635,7 +633,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineShop.Core.Entities.SiteSetting", b =>
                 {
-                    b.Navigation("Images");
+                    b.Navigation("Banner");
                 });
 #pragma warning restore 612, 618
         }

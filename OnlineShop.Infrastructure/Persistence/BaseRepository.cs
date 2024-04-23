@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using OnlineShop.Core.Constants;
 using OnlineShop.Core.Interfaces;
 using OnlineShop.Infrastructure.Data;
@@ -40,9 +41,32 @@ namespace OnlineShop.Core.Persistence
         }
 
 
-        public async Task<IEnumerable<T>> GetAllAsync(string[] includes = null, bool IgnoreGlobalFilters = false, Expression<Func<T, T>> select = null)
+        public async Task<IEnumerable<T>> GetAllAsync(
+                int? take = null,
+                int? skip = null,
+                Expression<Func<T, object>> orderBy = null,
+                string orderDirection = null,
+                string[] includes = null,
+                bool IgnoreGlobalFilters = false
+
+            )
         {
-            return await HandleIncludes(_entity, includes, IgnoreGlobalFilters, select).ToListAsync();
+            var query = HandleIncludes(_entity, includes, IgnoreGlobalFilters);
+
+
+            if (take.HasValue)
+                query = query.Take(take.Value);
+            if (skip.HasValue)
+                query = query.Skip(skip.Value);
+            if (orderBy != null)
+            {
+                if (orderDirection == OrderDirections.Descending)
+                    query.OrderByDescending(orderBy);
+                else
+                    query.OrderBy(orderBy);
+            }
+
+            return await query.ToListAsync();
         }
 
 

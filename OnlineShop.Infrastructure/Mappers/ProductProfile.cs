@@ -8,12 +8,34 @@ namespace OnlineShop.Infrastructure.Mappers
     {
         public ProductProfile()
         {
+            Random rnd = new Random();
+
             CreateMap<Product, ListProductsDTO>()
-                .ForMember(dest=>dest.Image, opt=>opt.MapFrom(src=>src.UploadedFiles.Select(i=> $"/Products/{i.FileName}").ToList()));
+                .ForMember(dest=>dest.Image, opt=>opt.MapFrom(src=>src.ProductFiles.Select(i=> i.FileName).ToList()));
 
             CreateMap<FormProductDTO, Product>()
-            .ForMember(dest => dest.UploadedFiles, opt => opt.MapFrom(src => src.Files.Select(i => $"/Products/{i.FileName}").ToList()))
+            .ForMember(dest => dest.ProductFiles, opt => opt.MapFrom(src => 
+                src.Files.Select(i => 
+                    new ProductFile { 
+                        FileName = $"/Products/{i.FileName}", 
+                        ContentType = i.ContentType,
+                        CreatedAt = DateTime.Now
+                    }).ToList()))
                 ;
+            CreateMap<SeedProductDTO, Product>()
+                .ForMember(dest=>dest.Category, opt => opt.Ignore())
+                .ForMember(dest=>dest.Brand, opt => opt.Ignore())
+                .ForMember(dest=>dest.discount, opt => opt.MapFrom(src=> rnd.Next(20)))
+                .ForMember(dest => dest.ProductFiles, opt => opt.MapFrom(src =>
+                    src.Images.Select(i =>
+                        new ProductFile
+                        {
+                            FileName = i,
+                            ContentType = "image/webp",
+                            CreatedAt = DateTime.Now
+                        }).ToList()))
+                ;
+
 
         }
     }

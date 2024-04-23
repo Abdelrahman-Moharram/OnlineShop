@@ -12,6 +12,7 @@ namespace OnlineShop.Core.IServices
     public interface IProductServices
     {
         Task<IEnumerable<ListProductsDTO>> ListProducts();
-        Task<BaseResponseDTO> AddProduct(FormProductDTO productDTO, List<UploadedFile> uploadedFiles, string CreatedBy);
+        Task<BaseResponseDTO> SeedProduct(SeedProductDTO productDTO, string CreatedBy);
+        Task<BaseResponseDTO> AddProduct(FormProductDTO productDTO, List<ProductFile> uploadedFiles, string CreatedBy);
     }
 }

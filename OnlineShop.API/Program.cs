@@ -32,7 +32,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     options =>
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-        // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     });
 // ______________________________ End Sql Conf_________________________________//
 # endregion
@@ -45,10 +45,10 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IRoleServices, RoleServices>();
 
-
+builder.Services.AddScoped<IHomeServices, HomeServices>();
+builder.Services.AddScoped<IAdminServices, AdminServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
-
 # endregion
 
 # region Identity

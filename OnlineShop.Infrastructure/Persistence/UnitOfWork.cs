@@ -18,7 +18,10 @@ namespace OnlineShop.Infrastructure.Persistence
         public IRepository<Category> Categories { get; private set; }
         public IRepository<Brand> Brands { get; private set;}
         public IRepository<ProductItem> ProductItems { get; private set; }
-        public IRepository<UploadedFile> UploadedFiles { get; private set; }
+        public IRepository<ProductFile> ProductFiles { get; private set; }
+        public IRepository<Banner> Banners { get; private set; }
+        public IRepository<SiteSetting> SiteSettings { get; private set; }
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -32,8 +35,11 @@ namespace OnlineShop.Infrastructure.Persistence
 
             ProductItems = new BaseRepository<ProductItem>(_context);
 
-            UploadedFiles = new BaseRepository<UploadedFile>(_context);
-            
+            ProductFiles = new BaseRepository<ProductFile>(_context);
+
+            Banners = new BaseRepository<Banner>(_context);
+
+            SiteSettings = new BaseRepository<SiteSetting>(_context);
         }
 
         public async Task<int> SaveAsync()

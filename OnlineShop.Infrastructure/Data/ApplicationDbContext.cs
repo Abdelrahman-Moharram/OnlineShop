@@ -47,20 +47,28 @@ namespace OnlineShop.Infrastructure.Data
             new ProductItemConfigurations().Configure(builder.Entity<ProductItem>());
             new BrandsConfigurations().Configure(builder.Entity<Brand>());
 
-            builder.Entity<UploadedFile>()
+            builder.Entity<ProductFile>()
                 .HasOne(i => i.Product)
-                .WithMany(i => i.UploadedFiles)
+                .WithMany(i => i.ProductFiles)
                 .HasForeignKey(i => i.ProductId);
 
-            builder.Entity<UploadedFile>()
+            builder.Entity<ProductFile>()
                 .HasQueryFilter(i => !i.IsDeleted);
 
+            builder.Entity<Banner>()
+                .HasQueryFilter(i => !i.IsDeleted);
+
+            builder.Entity<SiteSetting>()
+                .HasQueryFilter(i => !i.IsDeleted);
         }
 
         DbSet<Brand> Brands { get; set; }
         DbSet<Category> Categories { get; set; }
         DbSet<Product> Products { get; set; }
         DbSet<ProductItem> ProductItems { get; set; }
-        DbSet<UploadedFile> UploadedFiles { get; set; }
+        DbSet<Banner> Banners { get; set; }
+        DbSet<ProductFile> ProductFiles { get; set; }
+
+        DbSet<SiteSetting> SiteSettings { get; set; }  
     }
 }

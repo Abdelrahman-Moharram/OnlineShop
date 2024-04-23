@@ -5,9 +5,12 @@ namespace OnlineShop.Core.Interfaces
     public interface IRepository <T> where T : class
     {
         Task<IEnumerable<T>> GetAllAsync(
-            string[] includes = null, 
-            bool IgnoreGlobalFilters = false,
-            Expression<Func<T, T>> Select = null
+            int? take = null,
+            int? skip = null,
+            Expression<Func<T, object>> orderBy = null,
+            string orderDirection = null,
+            string[] includes = null,
+            bool IgnoreGlobalFilters = false
             );
         Task<T> GetById(string id);
         Task AddAsync (T entity);

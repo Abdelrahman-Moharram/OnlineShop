@@ -21,6 +21,9 @@ namespace OnlineShop.Core.Configurations
                 .IsRequired()
                 .HasMaxLength(255);
 
+            builder.Property(i => i.discount)
+                .HasDefaultValue(0);
+
             builder.Property(i => i.Price)
                 .HasDefaultValue(0)
                 .HasColumnType("money");
@@ -32,6 +35,8 @@ namespace OnlineShop.Core.Configurations
             builder.HasOne(i => i.Brand)
                 .WithMany(ii => ii.Products)
                 .HasForeignKey(i => i.BrandId);
+
+            
 
             builder
                 .HasQueryFilter(i => !i.IsDeleted);

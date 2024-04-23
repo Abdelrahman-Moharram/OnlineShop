@@ -29,7 +29,7 @@ namespace OnlineShop.API.Controllers
             {
                 FileUpload fileUpload = new ();
                 var userId = User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value;
-                var uploadedFiles = fileUpload.UploadProductImages(productDTO.Files, userId);
+                var uploadedFiles = fileUpload.UploadProductImages(productDTO.Files);
 
                 BaseResponseDTO responseDTO = await _productServices.AddProduct(productDTO, uploadedFiles, userId);
                 if(responseDTO.IsSuccessed)
@@ -38,5 +38,22 @@ namespace OnlineShop.API.Controllers
             }
             return BadRequest(ModelState);
         }
+
+        [HttpPost("seed-product")]
+        public async Task<IActionResult> ProductSeeding([FromBody] SeedProductDTO productDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                FileUpload fileUpload = new();
+                var userId = User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value;
+
+                BaseResponseDTO responseDTO = await _productServices.SeedProduct(productDTO, userId);
+                if (responseDTO.IsSuccessed)
+                    return BadRequest(responseDTO);
+                return Ok(responseDTO);
+            }
+            return BadRequest(ModelState);
+        }
+
     }
 }

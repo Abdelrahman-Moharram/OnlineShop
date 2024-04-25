@@ -1,5 +1,5 @@
 import React from 'react'
-import DetailedProductsCollection from '../../Components/Collections/DetailedProductsCollection'
+import DetailedProductsCollection from '../../Components/Lists/ProductsList/DetailedProductsCollection'
 const ProductsList = () => {
   return (
     <div>

@@ -16,6 +16,8 @@ import NotFound from './Pages/NotFound.jsx'
 import IsAuthenticated from './Pages/ProtectedRoutes/IsAuthenticated.jsx'
 import IsAdmin from './Pages/ProtectedRoutes/IsAdmin.jsx'
 import Logout from './Pages/Auth/Logout.jsx';
+
+import ProductDetails from './Pages/Products/ProductDetails.jsx';
 import ProductsList from './Pages/Home/ProductsList.jsx';
 
 const router = createBrowserRouter ([
@@ -30,7 +32,16 @@ const router = createBrowserRouter ([
       },
       {
         path:"/Products",
-        element:<ProductsList />
+        children:[
+          {
+            index:true,
+            element:<ProductsList />
+          },
+          {
+            path:":id",
+            element:<ProductDetails />
+          }
+        ]
       },
       {
         path:"/admin/roles",

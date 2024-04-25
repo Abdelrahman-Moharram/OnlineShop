@@ -4,7 +4,7 @@ import DefaultSwiper from '../Common/Swiper'
 const Hero = ({isLoading, images}) => {
   return (
     <div className="relative bg-hero-gradiant ">
-        <DefaultSwiper images={images} />
+        <DefaultSwiper isLoading={isLoading} images={images} />
     </div>
   )
 }

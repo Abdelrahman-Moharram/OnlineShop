@@ -1,8 +1,8 @@
 import React from 'react'
 import ScrollableCollections from '../../Components/Collections/ScrollableCollections'
 import Hero from '../../Components/Sections/Hero'
-import ScrollableProductsList from '../../Components/Lists/ProductsList/ScrollableProductsList'
 import { useHomePageQuery } from '../../redux/features/Products/ProductApiSlice'
+import ScrollableProductsList from '../../Components/Lists/ProductsList/ScrollableProductsList'
 
 const Index = () => {
   const {data, isLoading} = useHomePageQuery()

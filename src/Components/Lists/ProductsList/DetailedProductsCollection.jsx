@@ -1,9 +1,9 @@
 import React from 'react'
-import SortCollections from './SortCollections'
-import SummaryCollection from './Summary.Collection'
-import PriceFilter from './PriceFilter'
-import AvailbilityFilter from './AvailbilityFilter'
-import ProductCard from '../Cards/ProductCard'
+import SortCollections from '../../Collections/SortCollections'
+import SummaryCollection from '../../Collections/Summary.Collection'
+import PriceFilter from '../../Collections/PriceFilter'
+import AvailbilityFilter from '../../Collections/AvailbilityFilter'
+import ProductCard from '../../Cards/ProductCard'
 
 const DetailedProductsCollection = ({title}) => {
   return (

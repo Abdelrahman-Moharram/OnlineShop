@@ -88,7 +88,14 @@ const Nav = () => {
                             {
                                 data.map(prod=>(
                                 <div className='px-4 py-2' key={prod?.id}>
-                                    <Link to={"/"}  className="flex justify-evenly items-center hover:bg-gray-100 rounded-lg">
+                                    <Link 
+                                        to={`/products/${prod?.id}`}  
+                                        className="flex justify-evenly items-center hover:bg-gray-100 rounded-lg"
+                                        onClick={()=>{
+                                            if(searchQuery)
+                                                setSearch('')
+                                        }}
+                                    >
                                         <div className="col-span-1">
                                         {
                                             prod?.image && prod.image.length?

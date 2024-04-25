@@ -10,9 +10,9 @@ import Divider from '../../Components/Common/Divider';
 const ProductDetails = () => {
     const {id} = useParams()
 
-    const {data : product} = useProductDetailsQuery(id)
-    const {data:categoryProducts } = useProductSuggestionsQuery({Id:product?.categoryId, productId: product?.id}, {refetchOnMountOrArgChange:true})
-    const {data:brandProducts} = useProductSuggestionsQuery({Id:product?.brandId, productId: product?.id}, {refetchOnMountOrArgChange:true, })
+    const {data : product, isLoading} = useProductDetailsQuery(id)
+    const { data:categoryProducts } = useProductSuggestionsQuery({Id:product?.categoryId, productId: product?.id}, {skip:!product?.id, refetchOnMountOrArgChange:true})
+    const { data:brandProducts} = useProductSuggestionsQuery({Id:product?.brandId, productId: product?.id}, {skip:!product?.id, refetchOnMountOrArgChange:true, })
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' })
     }, [id]);
@@ -25,7 +25,7 @@ const ProductDetails = () => {
         </div> */}
       
       <div className="grid grid-cols-1 sm:grid-cols-2 mt-10 gap-5 place-items-center mb-5">
-        <ProductBanner images={product?.image} />
+        <ProductBanner images={product?.image} isLoading={isLoading} />
         <ProductInfo product={product} />
       </div>
       

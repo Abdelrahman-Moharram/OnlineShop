@@ -1,17 +1,13 @@
 import React from 'react'
 import ImageSkeleton from '../../Skeletons/ImageSkeleton'
+import ProductImageSwipper from './ProductImageSwipper'
 
-const ProductBanner = ({images}) => {
+const ProductBanner = ({images, isLoading}) => {
   return (
     <div className=' '>
         {
         images?
-            <img 
-                src={images[0].includes('https')?  images[0] :import.meta.env.VITE_BASE_URL+images[0]}
-                alt='banner'
-                sizes="100vw"
-                style={{ width: '400px', height: 'auto' }}
-            />
+            <ProductImageSwipper isLoading={isLoading} images={images}  />
             
             :
             <ImageSkeleton width={400} height={225} />

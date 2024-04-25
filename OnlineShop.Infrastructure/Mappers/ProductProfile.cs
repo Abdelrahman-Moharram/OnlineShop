@@ -13,6 +13,13 @@ namespace OnlineShop.Infrastructure.Mappers
             CreateMap<Product, ListProductsDTO>()
                 .ForMember(dest=>dest.Image, opt=>opt.MapFrom(src=>src.ProductFiles.Select(i=> i.FileName).ToList()));
 
+            CreateMap<Product, ProductDetailsDTO>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.ProductFiles.Select(i => i.FileName).ToList()))
+                .ForMember(dest => dest.CategoryName, opt=>opt.MapFrom(src=>src.Category.Name))
+                .ForMember(dest => dest.BrandName, opt=>opt.MapFrom(src=>src.Brand.Name));
+
+            
+
             CreateMap<FormProductDTO, Product>()
             .ForMember(dest => dest.ProductFiles, opt => opt.MapFrom(src => 
                 src.Files.Select(i => 

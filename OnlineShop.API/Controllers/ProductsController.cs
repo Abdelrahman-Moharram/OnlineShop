@@ -11,16 +11,23 @@ namespace OnlineShop.API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        IProductServices _productServices;
-        public ProductsController(IProductServices productServices)
+        private readonly IProductServices _productServices;
+        private readonly ILogger<ProductsController> _logger;
+
+        public ProductsController(IProductServices productServices, ILogger<ProductsController> logger)
         {
             _productServices = productServices;
+            _logger = logger;
         }
         [HttpGet("")]
         public async Task<IActionResult> ProductList() 
-        {
-            return Ok(await _productServices.ListProducts());
-        }
+            => Ok(await _productServices.ListProducts());
+        
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ProductDetails(string id)
+            => Ok(await _productServices.ProductDetails(id));
+
 
         [HttpPost("add")]
         public async Task<IActionResult> AddProduct([FromForm] FormProductDTO productDTO)
@@ -54,6 +61,15 @@ namespace OnlineShop.API.Controllers
             }
             return BadRequest(ModelState);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProduct([FromQuery] string query)
+            => Ok(await _productServices.Search(query, take: 5));
+
+        [HttpGet("suggestions-category-brand")]
+        public async Task<IActionResult> GetProductByCategoryOrBrand([FromQuery] string id, [FromQuery] string productid)
+            => Ok(await _productServices.GetProductByCategoryIdOrBrandId(id, productid));
+
 
     }
 }

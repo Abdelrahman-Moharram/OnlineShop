@@ -24,8 +24,44 @@ namespace OnlineShop.Services
         {
             try
             {
-                var productList =  _mapper.Map<IEnumerable<ListProductsDTO>>(await _unitOfWork.Products.GetAllAsync(includes: new[] { "ProductFiles" }));
-                return productList;
+                return _mapper.Map<IEnumerable<ListProductsDTO>>(await _unitOfWork.Products.GetAllAsync(includes: new[] { "ProductFiles" }));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new List<ListProductsDTO>();
+            }
+        }
+
+        public async Task<ProductDetailsDTO> ProductDetails(string Id)
+        {
+            var product =  await _unitOfWork.Products.FindAsync(i => i.Id == Id, includes: new[] { "ProductFiles", "Category", "Brand" });
+            return _mapper.Map<ProductDetailsDTO>(product);
+
+        }
+
+        public async Task<IEnumerable<ListProductsDTO>> GetProductByCategoryIdOrBrandId(string Id, string productId)
+            => _mapper.Map<IEnumerable<ListProductsDTO>>(
+                await _unitOfWork.Products.FindAllAsync(
+                    i => i.Id != productId && (i.CategoryId == Id || i.BrandId == Id),
+                    includes: new[] { "ProductFiles" }, 
+                    take:10, 
+                    skip:0
+                   )
+                );
+
+        public async Task<IEnumerable<ListProductsDTO>> Search(string query, int take = 5)
+        {
+            try
+            {
+                return _mapper.Map<IEnumerable<ListProductsDTO>>(
+                        await _unitOfWork.Products.FindAllAsync(
+                            expression:i=>i.Name.ToLower().Contains(query.ToLower()),
+                            includes: new[] { "ProductFiles"},
+                            take: take,
+                            skip:0
+                            )
+                        );
             }
             catch (Exception ex)
             {
@@ -138,5 +174,8 @@ namespace OnlineShop.Services
             
 
         }
+
+        
+        
     }
 }

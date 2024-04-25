@@ -62,13 +62,13 @@ namespace OnlineShop.Infrastructure.Data
                 .HasQueryFilter(i => !i.IsDeleted);
         }
 
-        DbSet<Brand> Brands { get; set; }
-        DbSet<Category> Categories { get; set; }
-        DbSet<Product> Products { get; set; }
-        DbSet<ProductItem> ProductItems { get; set; }
-        DbSet<Banner> Banners { get; set; }
-        DbSet<ProductFile> ProductFiles { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductItem> ProductItems { get; set; }
+        public DbSet<Banner> Banners { get; set; }
+        public DbSet<ProductFile> ProductFiles { get; set; }
 
-        DbSet<SiteSetting> SiteSettings { get; set; }  
+        public DbSet<SiteSetting> SiteSettings { get; set; }  
     }
 }

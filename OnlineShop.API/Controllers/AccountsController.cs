@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Core.DTOs.AuthDTOs;
 using OnlineShop.Core.DTOs.ResponsesDTOs;
 using OnlineShop.Core.IServices;
+using OnlineShop.Infrastructure;
 
 namespace OnlineShop.API.Controllers
 {
@@ -19,11 +20,14 @@ namespace OnlineShop.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO register)
+        public async Task<IActionResult> Register([FromForm] RegisterDTO register)
         {
             if (ModelState.IsValid)
             {
-                var result = await _authService.Register(register);
+
+                FileUpload fileUpload = new FileUpload();
+                var file = fileUpload.uploadUserImage(register.Image, register.Username);
+                var result = await _authService.Register(register, file);
                 if (!result.IsSuccessed)
                     return BadRequest(result.Message);
 

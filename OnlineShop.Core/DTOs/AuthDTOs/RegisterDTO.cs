@@ -1,5 +1,6 @@
 ﻿
 
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineShop.Core.DTOs.AuthDTOs
@@ -9,6 +10,7 @@ namespace OnlineShop.Core.DTOs.AuthDTOs
 
         [Required, DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+        public IFormFile? Image { get; set; }
 
         [Compare("Password")]
         public string ConfirmPassword { get; set; }

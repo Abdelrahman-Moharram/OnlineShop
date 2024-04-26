@@ -2,11 +2,7 @@
 using OnlineShop.Core.Interfaces;
 using OnlineShop.Core.Persistence;
 using OnlineShop.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OnlineShop.Infrastructure.Persistence
 {
@@ -20,6 +16,7 @@ namespace OnlineShop.Infrastructure.Persistence
         public IRepository<ProductItem> ProductItems { get; private set; }
         public IRepository<ProductFile> ProductFiles { get; private set; }
         public IRepository<Banner> Banners { get; private set; }
+        public IRepository<UserImage> UserImages { get; private set; }
         public IRepository<SiteSetting> SiteSettings { get; private set; }
 
 
@@ -40,6 +37,8 @@ namespace OnlineShop.Infrastructure.Persistence
             Banners = new BaseRepository<Banner>(_context);
 
             SiteSettings = new BaseRepository<SiteSetting>(_context);
+
+            UserImages = new BaseRepository<UserImage>(_context);
         }
 
         public async Task<int> SaveAsync()

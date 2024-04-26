@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineShop.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OnlineShop.Core.Configurations
 {
@@ -15,6 +11,9 @@ namespace OnlineShop.Core.Configurations
         {
             builder
                 .HasQueryFilter(i => !i.IsDeleted);
+
+            builder.HasOne(i => i.Image)
+                .WithOne(ii=>ii.User);
         }
     }
 }

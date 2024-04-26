@@ -68,6 +68,7 @@ namespace OnlineShop.Infrastructure.Data
         public DbSet<ProductItem> ProductItems { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<ProductFile> ProductFiles { get; set; }
+/*        public DbSet<UserImage> UsersImages { get; set; }*/
 
         public DbSet<SiteSetting> SiteSettings { get; set; }  
     }

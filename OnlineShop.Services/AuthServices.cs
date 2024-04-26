@@ -6,9 +6,11 @@ using Microsoft.IdentityModel.Tokens;
 using OnlineShop.Core.DTOs.AuthDTOs;
 using OnlineShop.Core.DTOs.ResponsesDTOs;
 using OnlineShop.Core.Entities;
+using OnlineShop.Core.Interfaces;
 using OnlineShop.Core.IServices;
 using OnlineShop.Core.Settings;
 using OnlineShop.Infrastructure.Helper;
+using OnlineShop.Infrastructure.Persistence;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -21,13 +23,15 @@ namespace OnlineShop.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JWTSettings _jwt;
         private readonly ILogger<AuthServices> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthServices(UserManager<ApplicationUser> userManager, IOptions<JWTSettings> jwt, ILogger<AuthServices> logger)
+        public AuthServices(UserManager<ApplicationUser> userManager, IOptions<JWTSettings> jwt, ILogger<AuthServices> logger, IUnitOfWork unitOfWork)
         {
 
             _userManager = userManager;
             _logger = logger;
             _jwt = jwt.Value;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -68,17 +72,16 @@ namespace OnlineShop.Services
                         Message = "Username or Password is incorrect !"
                     };
                 JwtSecurityToken token = await CreateJWT(user);
-
+                
                 var Response = new AuthResponseDTO
                 {
                     IsSuccessed = true,
                     Email = user.Email,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     UserName = user.UserName,
-                    Message = $"{user.UserName} Loggedin Successfully"
+                    Message = $"{user.UserName} Loggedin Successfully",
                 };
                 RefreshToken refreshtoken = GenerateRefreshToken();
-
                 Response.RefreshToken = refreshtoken.Token;
                 Response.RefreshTokenExpiretion = refreshtoken.ExpiresOn;
                 user.RefreshTokens?.Add(refreshtoken);
@@ -100,7 +103,7 @@ namespace OnlineShop.Services
                 
         }
 
-        public async Task<AuthResponseDTO> Register(RegisterDTO userDTO)
+        public async Task<AuthResponseDTO> Register(RegisterDTO userDTO, UserImage userImage)
         {
             try
             {
@@ -122,7 +125,12 @@ namespace OnlineShop.Services
                 JwtSecurityToken token = await CreateJWT(user);
                 var refreshToken = GenerateRefreshToken();
                 user.RefreshTokens?.Add(refreshToken);
+                userImage.UserId = user.Id;
+                /*await _unitOfWork.UserImages.AddAsync(userImage); */
+                user.Image = userImage;
                 await _userManager.UpdateAsync(user);
+
+
 
                 return new AuthResponseDTO
                 {
@@ -132,7 +140,7 @@ namespace OnlineShop.Services
                     Email = userDTO.Email,
                     UserName = userDTO.Username,
                     RefreshToken = refreshToken?.Token,
-                    RefreshTokenExpiretion = refreshToken.ExpiresOn
+                    RefreshTokenExpiretion = refreshToken.ExpiresOn,
                 };
             }
             catch (Exception ex)
@@ -174,7 +182,6 @@ namespace OnlineShop.Services
             await _userManager.UpdateAsync(user);
 
             var accessToken = await CreateJWT(user);
-
             return new AuthResponseDTO
             {
                 Email = user.Email,
@@ -229,6 +236,7 @@ namespace OnlineShop.Services
                        new Claim("email", user?.Email),
                        new Claim(ClaimTypes.NameIdentifier, user.Id),
                        new Claim("userId", user.Id),
+                       new Claim("userImage", "/Users/" + (_unitOfWork.UserImages.FindAsync(i => i.UserId == user.Id).Result?.FileName ?? "default.jpg"))
                 }
             .Union(userClaims)
             .Union(roleClaims);

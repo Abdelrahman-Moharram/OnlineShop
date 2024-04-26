@@ -6,6 +6,32 @@ namespace OnlineShop.Infrastructure
 {
     public class FileUpload
     {
+
+        public UserImage uploadUserImage(IFormFile File, string userId)
+        {
+            if (File?.FileName != null)
+            {
+                UserImage image = new()
+                {
+                    FileName = File.FileName,
+                    ContentType = File.ContentType,
+                };
+
+                var path = Path.Combine("wwwroot", "Users", File.FileName);
+
+                using FileStream fileStream = new(path, FileMode.Create);
+                File.CopyTo(fileStream);
+
+            
+
+                return image;
+            }
+            return new UserImage
+            {
+                FileName= "default.jpg",
+                ContentType = "image/jpeg",
+            };
+        }
         public List<ProductFile> UploadProductImages(List<IFormFile> Files)
         {
             List<ProductFile> uploadedFiles = new();

@@ -19,6 +19,14 @@ export const authApiSlice = apiSlice.injectEndpoints({
                 body:{...data}
             })
         }),
+        refreshToken: builder.query({
+            query:()=>{
+                console.log("revoking...");
+                return {
+                    url:'/api/accounts/refresh-token'
+                }
+            }
+        }),
         logout: builder.query({
             query:()=>({
                 url:'/api/accounts/revoke-token'
@@ -30,5 +38,6 @@ export const authApiSlice = apiSlice.injectEndpoints({
 export const {
     useRegisterMutation,
     useLoginMutation,
-    useLogoutQuery
+    useLogoutQuery,
+    useRefreshTokenQuery
 } = authApiSlice

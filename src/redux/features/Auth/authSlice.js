@@ -12,7 +12,7 @@ const authSlice = createSlice({
     name:'auth',
     initialState,
     reducers:{
-        setAuth: (state)=>{
+        setAuth: (state, action)=>{
             const token = Cookies.get('access_token')
             if(token){
                 state.isAuthenticated = token? true : false;

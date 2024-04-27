@@ -33,7 +33,6 @@ export const productApiSlice = apiSlice.injectEndpoints({
 
         productSuggestions : builder.query({
             query:({Id, productId})=>{
-                console.log();
                 return{
                     url:`/api/Products/suggestions-category-brand`,
                     params:{'id':Id, 'productid':productId}
@@ -41,6 +40,23 @@ export const productApiSlice = apiSlice.injectEndpoints({
             }
         }),
 
+        topCategories: builder.query({
+            query:()=>{
+                return {
+                    url:'/api/Categories/top'
+                }
+            }
+        }),
+
+        topBrands: builder.query({
+            query:()=>{
+                return {
+                    url:'/api/Brands/top'
+                }
+            }
+        }),
+        
+        
         
         
     })
@@ -52,5 +68,7 @@ export const {
     useHomePageQuery,
     useSearchQuery,
     useProductDetailsQuery,
-    useProductSuggestionsQuery
+    useProductSuggestionsQuery,
+    useTopCategoriesQuery,
+    useTopBrandsQuery
 } = productApiSlice

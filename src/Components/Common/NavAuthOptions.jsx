@@ -1,14 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import UserNavDropDown from './UserNavDropDown'
 import { Link } from 'react-router-dom'
 import { FaCartShopping } from "react-icons/fa6";
 import Cart from '../Cart/Cart';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useGetUserCartQuery } from '../../redux/features/Products/cartApiSlice';
+import { fetchCart } from '../../redux/features/Products/ProductSlice';
 
 const NavAuthOptions = ({isAuthenticated, user}) => {
     const [cartToggler, setCartToggler] = useState(false)
     const {cart} = useSelector(state=>state.product)
-
+    const {data:cartData, isLoading, isSuccess} = useGetUserCartQuery()
+    const dispatch = useDispatch()
+    useEffect(()=>{
+        if(cartData?.cartItems?.length)
+            dispatch(fetchCart(cartData?.cartItems))
+    },[isLoading, isSuccess])
     return (
     <div>
         {

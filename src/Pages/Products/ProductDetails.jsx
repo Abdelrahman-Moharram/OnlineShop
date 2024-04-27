@@ -5,8 +5,9 @@ import ProductBanner from '../../Components/Lists/ProductsList/ProductBanner';
 import ProductInfo from '../../Components/Lists/ProductsList/ProductInfo';
 import { useProductDetailsQuery, useProductSuggestionsQuery } from '../../redux/features/Products/ProductApiSlice';
 import ScrollableProductsList from '../../Components/Lists/ProductsList/ScrollableProductsList';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../redux/features/Products/ProductSlice';
+import { useAddItemToCartMutation } from '../../redux/features/Products/cartApiSlice';
 
 const ProductDetails = () => {
     const {id} = useParams()
@@ -14,17 +15,26 @@ const ProductDetails = () => {
     const {data : product, isLoading} = useProductDetailsQuery(id)
     const { data:categoryProducts } = useProductSuggestionsQuery({Id:product?.categoryId, productId: product?.id}, {skip:!product?.id, refetchOnMountOrArgChange:true})
     const { data:brandProducts} = useProductSuggestionsQuery({Id:product?.brandId, productId: product?.id}, {skip:!product?.id, refetchOnMountOrArgChange:true, })
+    const {cart} = useSelector(state=>state.product)
+    const [addItemToCart, {isLoading:addItemLoading}] = useAddItemToCartMutation()
     const handleAddToCart = () => {
+      let quantity = cart.find(i=>i.productId === product?.id)?.quantity
+      if(!quantity)
+        quantity = 1
       dispatch(
         addToCart({
-          id: product?.id,
-          name: product?.name,
+          productId: product?.id,
+          productName: product?.name,
           image: product?.image[0],
           price: product?.price,
-          quantity: 1
-        }
+          quantity: quantity
+        })
       )
-      )
+      addItemToCart({
+        "productId": product?.id,
+        "quantity": quantity
+      })
+            
     }
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' })

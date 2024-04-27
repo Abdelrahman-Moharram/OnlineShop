@@ -14,6 +14,8 @@ namespace OnlineShop.Core.Interfaces
         IRepository<Banner> Banners { get; }
         IRepository<SiteSetting> SiteSettings { get; }
         IRepository<UserImage> UserImages { get; }
+        IRepository<Cart> Carts { get; }
+        IRepository<CartItem> CartItems { get; }
         Task<int> SaveAsync();
     }
 }

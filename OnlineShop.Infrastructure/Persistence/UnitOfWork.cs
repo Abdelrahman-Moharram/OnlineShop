@@ -18,7 +18,8 @@ namespace OnlineShop.Infrastructure.Persistence
         public IRepository<Banner> Banners { get; private set; }
         public IRepository<UserImage> UserImages { get; private set; }
         public IRepository<SiteSetting> SiteSettings { get; private set; }
-
+        public IRepository<Cart> Carts { get; private set; }
+        public IRepository<CartItem> CartItems { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -39,6 +40,10 @@ namespace OnlineShop.Infrastructure.Persistence
             SiteSettings = new BaseRepository<SiteSetting>(_context);
 
             UserImages = new BaseRepository<UserImage>(_context);
+
+            Carts = new BaseRepository<Cart>(_context);
+
+            CartItems = new BaseRepository<CartItem>(_context);
         }
 
         public async Task<int> SaveAsync()

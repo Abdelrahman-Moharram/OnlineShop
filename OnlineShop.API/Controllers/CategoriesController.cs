@@ -20,6 +20,11 @@ namespace OnlineShop.API.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("top")]
+        public async Task<IActionResult> GetTopCategories()
+        {
+            return Ok(await _categoryService.GetAllWithBaseIncludes(size: 10));
+        }
 
         [HttpPost("add")]
         public async Task<IActionResult> Add([FromBody] AddCategoryDTO CategoryDTO)
@@ -34,5 +39,7 @@ namespace OnlineShop.API.Controllers
             }
             return BadRequest(CategoryDTO);
         }
+
+        
     }
 }

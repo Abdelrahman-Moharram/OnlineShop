@@ -10,7 +10,7 @@ namespace OnlineShop.Core.Entities
 
         public string? Description { get; set; }
         public decimal Price { get; set; }
-        public float discount { get; set; }
+        public decimal discount { get; set; }
 
         public string CategoryId { get; set; }
         public Category? Category { get; set; }

@@ -14,19 +14,21 @@ namespace OnlineShop.Infrastructure.Mappers
     {
         public CategoryProfile()
         {
-            /*CreateMap<Category, GetCategoryDTO>()
-                .ForMember(dest => dest.CategoryProducts,
+            CreateMap<Category, GetCategoryDTO>()
+                /*.ForMember(dest => dest.CategoryProducts,
                     opt => opt.MapFrom(src =>
                         src.Products.Select(
                             prodbase => new SimpleModule { Id = prodbase.Id, Name = prodbase.Name }
                             ).ToList()
                         )
-                    ).ReverseMap();
+                    )*/
+                .ForMember(dest=>dest.size, opt=>opt.MapFrom(src=>src.Products.Count()))
+                .ReverseMap();
 
             CreateMap<Category, SimpleModule>()
                 .ForMember(dest => dest.Id,
                         opt => opt.MapFrom(src => new SimpleModule { Id = src.Id, Name = src.Name })
-                    ).ReverseMap();*/
+                    ).ReverseMap();
 
             CreateMap<AddCategoryDTO, Category>().ReverseMap();
             /*CreateMap<UpdateCategoryDTO, Category>().ReverseMap();*/

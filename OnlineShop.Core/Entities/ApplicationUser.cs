@@ -6,6 +6,8 @@ namespace OnlineShop.Core.Entities
     {
         public UserImage? Image { get; set; }
         public List<RefreshToken>? RefreshTokens { get; set; }
+        
+        public Cart? Cart { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

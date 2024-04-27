@@ -49,9 +49,12 @@ builder.Services.AddScoped<IHomeServices, HomeServices>();
 builder.Services.AddScoped<IAdminServices, AdminServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
-# endregion
+builder.Services.AddScoped<IBrandServices, BrandServices>();
+builder.Services.AddScoped<ICartServices, CartServices>();
 
-# region Identity
+#endregion
+
+#region Identity
 
 
 
@@ -125,6 +128,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddAutoMapper(typeof(CategoryProfile));
+builder.Services.AddAutoMapper(typeof(BrandProfile));
+builder.Services.AddAutoMapper(typeof(CartProfile));
 
 # endregion
 

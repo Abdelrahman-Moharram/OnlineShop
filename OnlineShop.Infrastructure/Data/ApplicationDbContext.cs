@@ -60,6 +60,16 @@ namespace OnlineShop.Infrastructure.Data
 
             builder.Entity<SiteSetting>()
                 .HasQueryFilter(i => !i.IsDeleted);
+
+
+            builder.Entity<Cart>()
+                .HasMany(i => i.CartItems)
+                .WithOne(ii => ii.Cart)
+                .HasForeignKey(iii=>iii.CartId);
+
+            builder.Entity<CartItem>().HasQueryFilter(i => !i.IsDeleted);
+            builder.Entity<Cart>().HasQueryFilter(i => !i.IsDeleted);
+
         }
 
         public DbSet<Brand> Brands { get; set; }
@@ -71,5 +81,7 @@ namespace OnlineShop.Infrastructure.Data
 /*        public DbSet<UserImage> UsersImages { get; set; }*/
 
         public DbSet<SiteSetting> SiteSettings { get; set; }  
+        public DbSet<Cart> Carts { get; set; }  
+        public DbSet<CartItem> CartItems { get; set; }
     }
 }

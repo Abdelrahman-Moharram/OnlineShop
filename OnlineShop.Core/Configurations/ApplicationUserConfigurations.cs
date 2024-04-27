@@ -14,6 +14,9 @@ namespace OnlineShop.Core.Configurations
 
             builder.HasOne(i => i.Image)
                 .WithOne(ii=>ii.User);
+
+            builder.HasOne(i => i.Cart)
+                .WithOne(ii => ii.user);
         }
     }
 }

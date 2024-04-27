@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OnlineShop.Core.DTOs.ProductsDTOs;
 using OnlineShop.Core.DTOs.ResponsesDTOs;
@@ -24,7 +25,9 @@ namespace OnlineShop.Services
         {
             try
             {
-                return _mapper.Map<IEnumerable<ListProductsDTO>>(await _unitOfWork.Products.GetAllAsync(includes: new[] { "ProductFiles" }));
+                
+                return _mapper.Map<IEnumerable<ListProductsDTO>>(
+                    await _unitOfWork.Products.GetAllAsync(include:i=>i.Include(a=>a.ProductFiles)));
             }
             catch (Exception ex)
             {
@@ -35,7 +38,10 @@ namespace OnlineShop.Services
 
         public async Task<ProductDetailsDTO> ProductDetails(string Id)
         {
-            var product =  await _unitOfWork.Products.FindAsync(i => i.Id == Id, includes: new[] { "ProductFiles", "Category", "Brand" });
+            // new[] { "ProductFiles", "Category", "Brand" }
+            var product =  await _unitOfWork.Products.FindAsync(
+                i => i.Id == Id, 
+                include:i => i.Include(a=>a.ProductFiles).Include(i=>i.Category).Include(i=>i.Brand) );
             return _mapper.Map<ProductDetailsDTO>(product);
 
         }
@@ -44,7 +50,7 @@ namespace OnlineShop.Services
             => _mapper.Map<IEnumerable<ListProductsDTO>>(
                 await _unitOfWork.Products.FindAllAsync(
                     i => i.Id != productId && (i.CategoryId == Id || i.BrandId == Id),
-                    includes: new[] { "ProductFiles" }, 
+                    include: i => i.Include(a => a.ProductFiles), 
                     take:10, 
                     skip:0
                    )
@@ -57,7 +63,7 @@ namespace OnlineShop.Services
                 return _mapper.Map<IEnumerable<ListProductsDTO>>(
                         await _unitOfWork.Products.FindAllAsync(
                             expression:i=>i.Name.ToLower().Contains(query.ToLower()),
-                            includes: new[] { "ProductFiles"},
+                            include: i => i.Include(a => a.ProductFiles),
                             take: take,
                             skip:0
                             )

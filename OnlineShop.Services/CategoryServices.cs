@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using OnlineShop.Core.DTOs;
+using OnlineShop.Core.Constants;
+using OnlineShop.Core.DTOs.CategoryDTOs;
 using OnlineShop.Core.DTOs.ResponsesDTOs;
 using OnlineShop.Core.Entities;
 using OnlineShop.Core.Interfaces;
 using OnlineShop.Core.IServices;
+using OnlineShop.Infrastructure.Data;
 
 
 namespace OnlineShop.Services
@@ -14,31 +17,50 @@ namespace OnlineShop.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<CategoryServices> _logger;
-        public CategoryServices(IUnitOfWork unitOfWork, IMapper mapper, ILogger<CategoryServices> logger)
+        private readonly ApplicationDbContext _context;
+        public CategoryServices(IUnitOfWork unitOfWork, IMapper mapper, ILogger<CategoryServices> logger, ApplicationDbContext context)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _context = context;
         }
 
-        /*public async Task<IEnumerable<GetCategoryDTO>> GetAll()
+        public async Task<IEnumerable<GetCategoryDTO>> GetAll()
         {
             return _mapper.Map<IEnumerable<GetCategoryDTO>>(await _unitOfWork.Categories.GetAllAsync());
         }
-        public async Task<IEnumerable<GetCategoryDTO>> GetAllWithBaseIncludes()
+        public async Task<IEnumerable<GetCategoryDTO>> GetAllWithBaseIncludes(int size)
         {
-            return _mapper.Map<IEnumerable<GetCategoryDTO>>(await _unitOfWork.Categories.GetAllAsync(new[] { "Products" }));
+            var Categories =
+                await _context
+                        .Categories
+                        .Include(i=>i.Products)
+                        .OrderByDescending(i=>i.Products.Count())
+                        .Take(size)
+                        .Skip(0)
+                        .ToListAsync();
+                /*= await _unitOfWork.Categories.GetAllAsync(
+                    includes: new[] { "Products" },
+                    orderBy: i => i.Products.Count(),
+                    orderDirection: OrderDirections.Descending,
+                    take: size,
+                    skip: 0
+                  );*/
+            return _mapper.Map<IEnumerable<GetCategoryDTO>>(
+                Categories
+                );
         }
         public async Task<GetCategoryDTO> GetById(string id)
         {
-            return _mapper.Map<GetCategoryDTO>(await _unitOfWork.Categories.GetByIdAsync(id));
+            return _mapper.Map<GetCategoryDTO>(await _unitOfWork.Categories.GetById(id));
         }
-        public async Task<IEnumerable<SimpleModule>> GetAsSelectList()
+        /*public async Task<IEnumerable<SimpleModule>> GetAsSelectList()
         {
             return _mapper.Map<IEnumerable<SimpleModule>>(
                     await _unitOfWork.Categories.GetAsSelectList(i => new SimpleModule { Id = i.Id, Name = i.Name })
                 );
-        }
+        }*/
 
 
 
@@ -49,8 +71,8 @@ namespace OnlineShop.Services
                         i => i.Name.Contains(SearchQuery) || i.Id.Contains(SearchQuery)
                     ));
 
-        }*/
-        
+        }
+
         public async Task<BaseResponseDTO> AddNew(Category newCategory, string CreatedBy)
         {
             if (string.IsNullOrEmpty(CreatedBy))

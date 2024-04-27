@@ -22,7 +22,8 @@ namespace OnlineShop.Core.Configurations
                 .HasMaxLength(255);
 
             builder.Property(i => i.discount)
-                .HasDefaultValue(0);
+                .HasDefaultValue(0)
+                .HasColumnType("decimal(18,2)");
 
             builder.Property(i => i.Price)
                 .HasDefaultValue(0)

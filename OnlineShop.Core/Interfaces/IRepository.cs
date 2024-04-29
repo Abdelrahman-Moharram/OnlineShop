@@ -18,7 +18,9 @@ namespace OnlineShop.Core.Interfaces
             Expression<Func<T, T>> selector = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
-            bool disableTracking = true
+            bool disableTracking = true,
+            int? take = null,
+            int? skip = null
             );
         Task<T> GetById(string id);
         Task AddAsync (T entity);
@@ -27,7 +29,6 @@ namespace OnlineShop.Core.Interfaces
 
         Task<T> FindAsync(
             Expression<Func<T, bool>> expression,
-            string[] includes = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
             string thenIncludes = null,
             bool IgnoreGlobalFilters = false

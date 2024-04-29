@@ -21,13 +21,14 @@ namespace OnlineShop.Services
             _mapper = mapper;
             _logger = logger;
         }
-        public async Task<IEnumerable<ListProductsDTO>> ListProducts()
+        public async Task<IEnumerable<ListProductsDTO>> ListProducts(int take, int skip)
         {
             try
             {
                 
                 return _mapper.Map<IEnumerable<ListProductsDTO>>(
-                    await _unitOfWork.Products.GetAllAsync(include:i=>i.Include(a=>a.ProductFiles)));
+                    await _unitOfWork.Products.GetAllAsync(include:i=>i.Include(a=>a.ProductFiles), take: take, skip: skip)
+                    );
             }
             catch (Exception ex)
             {

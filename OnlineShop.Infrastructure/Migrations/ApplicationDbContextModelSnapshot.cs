@@ -257,7 +257,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("SiteSettingId");
 
-                    b.ToTable("Banners");
+                    b.ToTable("Banners", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.Brand", b =>
@@ -289,7 +289,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.Cart", b =>
@@ -324,7 +324,7 @@ namespace OnlineShop.Infrastructure.Migrations
                     b.HasIndex("userId")
                         .IsUnique();
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.CartItem", b =>
@@ -364,7 +364,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.Category", b =>
@@ -396,7 +396,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.Product", b =>
@@ -460,7 +460,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.ProductFile", b =>
@@ -497,7 +497,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductFiles");
+                    b.ToTable("ProductFiles", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.ProductItem", b =>
@@ -541,7 +541,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductItems");
+                    b.ToTable("ProductItems", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.SiteSetting", b =>
@@ -566,7 +566,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SiteSettings");
+                    b.ToTable("SiteSettings", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.UserImage", b =>
@@ -604,7 +604,7 @@ namespace OnlineShop.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("UserImage");
+                    b.ToTable("UserImage", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -660,7 +660,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineShop.Core.Entities.ApplicationUser", b =>
                 {
-                    b.OwnsMany("OnlineShop.Core.Entities.RefreshToken", "RefreshTokens", b1 =>
+                    b.OwnsMany("OnlineShop.Core.Entities.ApplicationUser.RefreshTokens#OnlineShop.Core.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<string>("ApplicationUserId")
                                 .HasColumnType("nvarchar(450)");

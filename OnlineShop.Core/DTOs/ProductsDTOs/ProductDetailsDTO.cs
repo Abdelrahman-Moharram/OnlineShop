@@ -1,8 +1,9 @@
 ﻿
 namespace OnlineShop.Core.DTOs.ProductsDTOs
 {
-    public class ProductDetailsDTO : ListProductsDTO
+    public class ProductDetailsDTO : BaseProductDTO
     {
+        public List<string> Image { get; set; }
         public string CategoryId { get; set; }
         public string CategoryName { get; set; }
 

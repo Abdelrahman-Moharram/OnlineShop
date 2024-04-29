@@ -11,7 +11,7 @@ namespace OnlineShop.Infrastructure.Mappers
             Random rnd = new Random();
 
             CreateMap<Product, ListProductsDTO>()
-                .ForMember(dest=>dest.Image, opt=>opt.MapFrom(src=>src.ProductFiles.Select(i=> i.FileName).ToList()));
+                .ForMember(dest=>dest.Image, opt=>opt.MapFrom(src=>src.ProductFiles.Select(i=> i.FileName).FirstOrDefault()));
 
             CreateMap<Product, ProductDetailsDTO>()
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.ProductFiles.Select(i => i.FileName).ToList()))

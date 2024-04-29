@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using OnlineShop.Core.Constants;
 using OnlineShop.Core.Entities;
 using OnlineShop.Core.Interfaces;
 using OnlineShop.Infrastructure.Data;
@@ -53,7 +51,9 @@ namespace OnlineShop.Core.Persistence
             Expression<Func<T, T>> selector = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
-            bool disableTracking = false
+            bool disableTracking = true,
+            int? take = null,
+            int? skip = null
             )
         {
             IQueryable<T> query = _entity;
@@ -70,6 +70,11 @@ namespace OnlineShop.Core.Persistence
             if (selector != null)
                 query = query.Select(selector);
 
+            if (take.HasValue)
+                query = query.Take(take.Value);
+            if (skip.HasValue)
+                query = query.Skip(skip.Value);
+            
             if (orderBy != null)
             {
                 return await orderBy(query).ToListAsync();
@@ -122,7 +127,6 @@ namespace OnlineShop.Core.Persistence
 
         public async Task<T> FindAsync(
             Expression<Func<T, bool>> expression, 
-            string[] includes = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
             string thenIncludes =null,
             bool IgnoreGlobalFilters=false
@@ -135,7 +139,7 @@ namespace OnlineShop.Core.Persistence
             Expression<Func<T, bool>> expression,
             int? take = null,
             int? skip = null,
-                Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
             bool IgnoreGlobalFilters = false
             )

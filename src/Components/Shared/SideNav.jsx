@@ -7,7 +7,7 @@ export default function SideNav({className}) {
     const [categoryToggler, setCategoryToggler] = useState(false)
     const [brandToggler, setBrandToggler] = useState(false)
     const {data: Categories} = useTopCategoriesQuery({},{skip:!categoryToggler})
-    const {data: Brands} = useTopBrandsQuery({},{skip:!categoryToggler})
+    const {data: Brands} = useTopBrandsQuery({},{skip:!brandToggler})
     
     return (
         <div className={className}>
@@ -102,7 +102,7 @@ export default function SideNav({className}) {
                                     Brands.map(brand=>(
                                         <li key={brand?.id}>
                                             <Link
-                                                to={"/categories/"+brand.id}
+                                                to={"/Brands/"+brand.id}
                                                 className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                                             >
                                                 <div className="flex justify-between">

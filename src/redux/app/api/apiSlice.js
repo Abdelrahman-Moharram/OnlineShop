@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 const baseQuery = fetchBaseQuery({
     baseUrl:import.meta.env.VITE_BASE_URL,
     credentials:'include',
@@ -20,8 +21,16 @@ const baseQueryWithReAuth = async (args, api, extraOptions)=>{
             Cookies.set('access_token', res?.data?.token)
             result = await baseQuery(args, api, extraOptions)
         }else{
-            if(res.error.status === 403)
+            if(res.error.status === 403 || res.error.status === 401)
+            {
                 res.error.data.message = "Your Session has expired !"
+                const token =  Cookies.get('access_token')
+                if(token){
+                    toast.error("Your Session has expired !")
+                    window?.location.replace(`/auth/logout`);
+                }
+            }
+            console.log(res);
             return res
         }
     }

@@ -7,7 +7,7 @@ const ProductCard = ({product}) => {
     <Link to={`/products/${product?.id}`} className="group block overflow-hidden">
         <img
           // src={import.meta.env.VITE_BASE_URL+product?.image[0]}
-          src={product?.image[0]?.includes('http')?  product?.image[0] :import.meta.env.VITE_BASE_URL+product?.image[0]}
+          src={product?.image?.includes('http')?  product?.image :import.meta.env.VITE_BASE_URL+product?.image}
           alt=""
           className="h-[350px] w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[450px]"
         />

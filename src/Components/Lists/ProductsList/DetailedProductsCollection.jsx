@@ -5,7 +5,8 @@ import PriceFilter from '../../Collections/PriceFilter'
 import AvailbilityFilter from '../../Collections/AvailbilityFilter'
 import ProductCard from '../../Cards/ProductCard'
 
-const DetailedProductsCollection = ({title}) => {
+const DetailedProductsCollection = ({title, data, isLoading}) => {
+  console.log(data?.length);
   return (
     
 <section>
@@ -36,12 +37,15 @@ const DetailedProductsCollection = ({title}) => {
     </div>
 
     <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <ProductCard />
-      <ProductCard />
-      <ProductCard />
-      <ProductCard />
-      <ProductCard />
-      <ProductCard />
+      {
+        data && data.length?
+          data.map(product=>(
+            <ProductCard product={product} key={product.id} />
+          ))
+        :
+          // to do add product list skeleton
+        null
+      }
     </div>
   </div>
 </section>

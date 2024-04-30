@@ -4,9 +4,9 @@ import SummaryCollection from '../../Collections/Summary.Collection'
 import PriceFilter from '../../Collections/PriceFilter'
 import AvailbilityFilter from '../../Collections/AvailbilityFilter'
 import ProductCard from '../../Cards/ProductCard'
+import PageSizeFilter from '../../Collections/PageSizeFilter'
 
-const DetailedProductsCollection = ({title, data, isLoading}) => {
-  console.log(data?.length);
+const DetailedProductsCollection = ({title, data, isLoading, size, page}) => {
   return (
     
 <section>
@@ -14,10 +14,10 @@ const DetailedProductsCollection = ({title, data, isLoading}) => {
     <header>
       <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">{title}</h2>
 
-      <p className="mt-4 max-w-md text-gray-500">
+      {/* <p className="mt-4 max-w-md text-gray-500">
         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque praesentium cumque iure
         dicta incidunt est ipsam, officia dolor fugit natus?
-      </p>
+      </p> */}
     </header>
 
     <div className="mt-8 sm:flex sm:items-center sm:justify-between">
@@ -33,7 +33,10 @@ const DetailedProductsCollection = ({title, data, isLoading}) => {
         <PriceFilter />
       </div>
 
-      <SortCollections />
+      <div className='flex gap-3'>
+        <SortCollections />
+        <PageSizeFilter page={page} size={size} />
+      </div>
     </div>
 
     <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

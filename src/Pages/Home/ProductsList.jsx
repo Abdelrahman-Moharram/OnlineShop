@@ -1,12 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import DetailedProductsCollection from '../../Components/Lists/ProductsList/DetailedProductsCollection'
 import { useProductListQuery } from '../../redux/features/Products/ProductApiSlice'
+import Pagination from '../../Components/Common/Pagination'
+import Spinner from '../../Components/Common/Spinner'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 const ProductsList = () => {
-  const {data, isLoading} = useProductListQuery({take:24, skip:0})
+
+  const [params] = useSearchParams();
+  const nav = useNavigate()
+  const size = params.get('size')
+  const page = params.get('page')
   
+    if(! size || ! page)
+     nav({
+      pathname:'/products',
+      search:{
+        size: 24,
+        page: 1
+      }
+    })
+   
+  const {data, isLoading} = useProductListQuery({take:size, skip:page-1})
+
   return (
     <div>
-      <DetailedProductsCollection title={"test title"} data={data} isLoading={isLoading} />
+      {
+        isLoading?
+          <Spinner />
+        :
+          <DetailedProductsCollection size={size} title={"All Products"} page={page} data={data?.productList} isLoading={isLoading} />
+      }
+  
+      <div className="flex justify-center my-10">
+        <Pagination size={parseInt(size)} page={parseInt(page)} totalPages={data?.pages} />
+      </div>
     </div>
   )
 }

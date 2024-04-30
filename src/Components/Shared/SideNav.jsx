@@ -15,12 +15,12 @@ export default function SideNav({className}) {
                 <div className="px-3 py-6">
                     <ul className="">
                         <li>
-                            <a
-                                href="#"
+                            <Link
+                                to="/products"
                                 className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                             >
-                            General
-                            </a>
+                                All Products
+                            </Link>
                         </li>
 
                         <li>

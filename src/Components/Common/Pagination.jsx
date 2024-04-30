@@ -1,16 +1,16 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 
-const Pagination = ({page, totalPages, size}) => {
+const Pagination = ({handlePage, totalPages, page}) => {
+    page = parseInt(page)
   return (
     <div className="inline-flex items-center justify-center gap-3">
         {
             page > 1?
-            <Link
+            <div
                 onClick={()=>{
+                    handlePage(page-1)
                     window.scroll({top: 0, left: 0, behavior: 'smooth' })
                 }}
-                to={`?page=${page-1}&size=${size}`}
                 className="cursor-pointer inline-flex size-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180"
             >
                 <span className="sr-only">Next Page</span>
@@ -21,7 +21,7 @@ const Pagination = ({page, totalPages, size}) => {
                     clipRule="evenodd"
                 />
                 </svg>
-            </Link>
+            </div>
             :
             null
         }
@@ -33,11 +33,11 @@ const Pagination = ({page, totalPages, size}) => {
         </p>
         {
             page < totalPages?
-        <Link
+        <div
             onClick={()=>{
+                handlePage(page+1)
                 window.scroll({top: 0, left: 0, behavior: 'smooth' })
             }}
-            to={`?page=${page+1}&size=${size}`}
             className="cursor-pointer inline-flex size-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180"
         >
             <span className="sr-only">Next Page</span>
@@ -48,7 +48,7 @@ const Pagination = ({page, totalPages, size}) => {
                 clipRule="evenodd"
             />
             </svg>
-        </Link>
+        </div>
         :
         null
         }

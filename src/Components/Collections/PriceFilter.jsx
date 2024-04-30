@@ -1,8 +1,8 @@
 import React from 'react'
 
-const PriceFilter = () => {
+const PriceFilter = ({minprice, maxprice, handleMinprice, handleMaxprice}) => {
   return (
-    <div className="relative">
+    <div className="relative z-[1]">
           <details className="group [&_summary::-webkit-details-marker]:hidden">
             <summary
               className="flex cursor-pointer items-center gap-2 border-b border-gray-400 pb-1 text-gray-900 transition hover:border-gray-600"
@@ -34,7 +34,14 @@ const PriceFilter = () => {
                 <header className="flex items-center justify-between p-4">
                   <span className="text-sm text-gray-700"> The highest price is $600 </span>
 
-                  <button type="button" className="text-sm text-gray-900 underline underline-offset-4">
+                  <button 
+                    type="button" 
+                    className="text-sm text-gray-900 underline underline-offset-4"
+                    onClick={()=>{
+                      handleMinprice('')
+                      handleMaxprice('')
+                    }}
+                  >
                     Reset
                   </button>
                 </header>
@@ -42,24 +49,28 @@ const PriceFilter = () => {
                 <div className="border-t border-gray-200 p-4">
                   <div className="flex justify-between gap-4">
                     <label htmlFor="FilterPriceFrom" className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">$</span>
+                      <span className="text-sm text-gray-600">L.E</span>
 
                       <input
                         type="number"
                         id="FilterPriceFrom"
                         placeholder="From"
                         className="w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                        value={minprice}
+                        onChange={(e)=>handleMinprice(e.target.value)}
                       />
                     </label>
 
                     <label htmlFor="FilterPriceTo" className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">$</span>
+                      <span className="text-sm text-gray-600">L.E</span>
 
                       <input
                         type="number"
                         id="FilterPriceTo"
                         placeholder="To"
                         className="w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                        value={maxprice}
+                        onChange={(e)=>handleMaxprice(e.target.value)}
                       />
                     </label>
                   </div>

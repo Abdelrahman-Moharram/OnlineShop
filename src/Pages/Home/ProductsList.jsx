@@ -3,23 +3,65 @@ import DetailedProductsCollection from '../../Components/Lists/ProductsList/Deta
 import { useProductListQuery } from '../../redux/features/Products/ProductApiSlice'
 import Pagination from '../../Components/Common/Pagination'
 import Spinner from '../../Components/Common/Spinner'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 const ProductsList = () => {
 
   const [params] = useSearchParams();
   const nav = useNavigate()
-  const size = params.get('size')
-  const page = params.get('page')
+  const [size, setSize] = useState(params.get('size') ?? 24)
+  const [page, setPage] = useState(params.get('page') ?? 1)
+  const [sort, setSort] = useState(params.get('sort') ?? '')
+  const [minprice, setMinprice] = useState(params.get('minprice') ?? '')
+  const [maxprice, setMaxprice] = useState(params.get('maxprice') ?? '')
+
+  const handleSize =(val)=>{
+    if(val.match(/^[0-9]+$/))  
+      setSize(parseInt(val))
+    else{
+      toast.error("invalid size filter")
+    }
+  }
+  const handlePage =(val)=>{
+    if(val.match(/^[0-9]+$/))
+      setPage(val)
+    else{
+      toast.error("invalid page filter")
+    }
+  }
+  const handleSort = (val) => {
+    setSort(val)
+  }
+  const handleMinprice =(val)=>{
+    console.log(val);
+    if(val.match(/^[0-9]+$/))
+      setMinprice(parseFloat(val))
+    else if(val == '')
+      setMinprice(val)
+    else
+      toast.error("invalid page filter")
+
+  }
+  const handleMaxprice =(val)=>{
+    if(val.match(/^[0-9]+$/))
+      setMaxprice(parseFloat(val))
+    else if(val == '')
+      setMaxprice(val)
+    else
+      toast.error("invalid page filter")
+  }
 
   useEffect(()=>{
-    if(!size || !page){
-      nav('?size=24&page=1')
-    }
-
-  },[size, page])
+      nav(`?size=${size}&page=${page}&sort=${sort}&minprice=${minprice}&maxprice=${maxprice}`)
+  },[
+    size,
+    page,
+    sort,
+    minprice,
+    maxprice])
     
    
-  const {data, isLoading} = useProductListQuery({take:size, skip:page-1})
+  const {data, isLoading} = useProductListQuery({take:size, skip:page-1, sort, minprice, maxprice}, {refetchOnMountOrArgChange:true})
 
   return (
     <div>
@@ -27,11 +69,23 @@ const ProductsList = () => {
         isLoading?
           <Spinner />
         :
-          <DetailedProductsCollection size={size} title={"All Products"} page={page} data={data?.productList} isLoading={isLoading} />
+          <DetailedProductsCollection 
+            title={"All Products"} 
+            handleSize={handleSize}
+            handleSort={handleSort}
+            handleMinprice={handleMinprice}
+            handleMaxprice={handleMaxprice}
+            size={size} 
+            data={data?.productList} 
+            sort={sort} 
+            isLoading={isLoading} 
+            minprice={minprice} 
+            maxprice={maxprice} 
+          />
       }
   
       <div className="flex justify-center my-10">
-        <Pagination size={parseInt(size)} page={parseInt(page)} totalPages={data?.pages} />
+        <Pagination handlePage={handlePage} page={page} totalPages={data?.pages} />
       </div>
     </div>
   )

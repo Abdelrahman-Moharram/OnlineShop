@@ -16,7 +16,7 @@ export default function SideNav({className}) {
                     <ul className="">
                         <li>
                             <Link
-                                to="/products"
+                                to="/products?page=1&size=24"
                                 className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                             >
                                 All Products

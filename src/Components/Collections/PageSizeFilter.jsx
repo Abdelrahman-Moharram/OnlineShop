@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 
-const PageSizeFilter = ({page, size}) => {
+const PageSizeFilter = ({size, handleSize}) => {
   const [showMenu, setShowMenu] = useState(false)
   
-  const links = [
-      { to: `?page=${page}&size=${24}`, label: '24' },
-      { to: `?page=${page}&size=${48}`, label: '48' },
-      { to: `?page=${page}&size=${72}`, label: '72' },
-      { to: `?page=${page}&size=${96}`, label: '96' },
+  const sizes = [
+      { label: '24' },
+      { label: '48' },
+      { label: '72' },
+      { label: '96' },
     ]
   return (
     <div className="relative" onClick={()=>setShowMenu(!showMenu)}>
@@ -32,15 +32,15 @@ const PageSizeFilter = ({page, size}) => {
           >
             <div className="p-2">
               {
-                links.map(({label, to})=>(
-                  <Link
-                    key={to}
-                    to={to}
-                    className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                sizes.map(({label})=>(
+                  <div
+                    key={label}
+                    onClick={()=>handleSize(label)}
+                    className="cursor-pointer block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                     role="menuitem"
                   >
                     {label}
-                  </Link>
+                  </div>
                 ))
               }
             </div>

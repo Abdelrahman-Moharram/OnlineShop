@@ -4,9 +4,9 @@ import { apiSlice } from "../../app/api/apiSlice";
 export const productApiSlice = apiSlice.injectEndpoints({
     endpoints:(builder)=>({
         productList: builder.query({
-            query:({take, skip})=>({
+            query:(data)=>({
                 url:'/api/Products',
-                params:{take, skip}
+                params:{...data}
             })
         }),
         HomePage : builder.query({

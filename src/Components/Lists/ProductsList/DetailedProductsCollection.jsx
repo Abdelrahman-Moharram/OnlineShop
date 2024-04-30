@@ -6,7 +6,18 @@ import AvailbilityFilter from '../../Collections/AvailbilityFilter'
 import ProductCard from '../../Cards/ProductCard'
 import PageSizeFilter from '../../Collections/PageSizeFilter'
 
-const DetailedProductsCollection = ({title, data, isLoading, size, page}) => {
+const DetailedProductsCollection = ({
+  title, 
+  data, 
+  sort,
+  size,
+  minprice,
+  maxprice,
+  handleSize,
+  handleSort,
+  handleMinprice,
+  handleMaxprice,
+}) => {
   return (
     
 <section>
@@ -30,14 +41,16 @@ const DetailedProductsCollection = ({title, data, isLoading, size, page}) => {
           </details>
         </div>
 
-        <PriceFilter />
+        <PriceFilter minprice={minprice} maxprice={maxprice} handleMinprice={handleMinprice} handleMaxprice={handleMaxprice} />
       </div>
 
       <div className='flex gap-3'>
-        <SortCollections />
-        <PageSizeFilter page={page} size={size} />
+        <SortCollections sort={sort} handleSort={handleSort} />
+        <PageSizeFilter handleSize={handleSize} size={size} />
       </div>
     </div>
+
+
 
     <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {

@@ -10,15 +10,14 @@ const ProductsList = () => {
   const nav = useNavigate()
   const size = params.get('size')
   const page = params.get('page')
-  
-    if(! size || ! page)
-     nav({
-      pathname:'/products',
-      search:{
-        size: 24,
-        page: 1
-      }
-    })
+
+  useEffect(()=>{
+    if(!size || !page){
+      nav('?size=24&page=1')
+    }
+
+  },[size, page])
+    
    
   const {data, isLoading} = useProductListQuery({take:size, skip:page-1})
 

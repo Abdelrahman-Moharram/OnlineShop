@@ -7,7 +7,7 @@ namespace OnlineShop.Core.IServices
 {
     public interface IProductServices
     {
-        Task<ProductPageDTO> ListProducts(int take, int skip);
+        Task<ProductPageDTO> ListProducts(int take, int skip, string? sort, decimal? minprice, decimal? maxprice);
         Task<ProductDetailsDTO> ProductDetails(string Id);
         Task<IEnumerable<ListProductsDTO>> GetProductByCategoryIdOrBrandId(string Id, string productId);
         Task<IEnumerable<ListProductsDTO>> Search(string query, int take = 5);

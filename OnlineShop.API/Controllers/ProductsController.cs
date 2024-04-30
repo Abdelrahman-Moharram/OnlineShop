@@ -20,8 +20,8 @@ namespace OnlineShop.API.Controllers
             _logger = logger;
         }
         [HttpGet("")]
-        public async Task<IActionResult> ProductList([FromQuery] int take, [FromQuery] int skip) 
-            => Ok(await _productServices.ListProducts(take, skip));
+        public async Task<IActionResult> ProductList([FromQuery] int take, [FromQuery] int skip, string? sort, decimal? minprice, decimal? maxprice) 
+            => Ok(await _productServices.ListProducts(take, skip, sort, minprice, maxprice));
         
         
         [HttpGet("{id}")]

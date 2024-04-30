@@ -6,7 +6,9 @@ using OnlineShop.Core.DTOs.ResponsesDTOs;
 using OnlineShop.Core.Entities;
 using OnlineShop.Core.Interfaces;
 using OnlineShop.Core.IServices;
+using OnlineShop.Infrastructure.Data;
 using System.Drawing;
+using System.Linq;
 
 namespace OnlineShop.Services
 {
@@ -15,25 +17,44 @@ namespace OnlineShop.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<ProductServices> _logger;
-
-        public ProductServices(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ProductServices> logger)
+        private readonly ApplicationDbContext _context;
+        public ProductServices(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ProductServices> logger, ApplicationDbContext context)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _context = context;
         }
-        public async Task<ProductPageDTO> ListProducts(int take, int skip)
+        public async Task<ProductPageDTO> ListProducts(int take, int skip, string? sort, decimal? minprice, decimal? maxprice)
         {
             try
             {
-                
-                var products = _mapper.Map<IEnumerable<ListProductsDTO>>(
-                    await _unitOfWork.Products.GetAllAsync(include:i=>i.Include(a=>a.ProductFiles), take: take, skip: take * skip)
-                    );
+                IQueryable<Product> products = _context.Products;
+                if (sort == "asc")
+                    products = products.OrderBy(i => i.Price);
+                else if(sort == "des")
+                    products = products.OrderByDescending(i => i.Price);
+
+                if(minprice != null)
+                    products = products.Where(i=>i.Price > minprice);
+                if(maxprice != null)
+                    products = products.Where(i => i.Price < maxprice);
+
+                /*if (sort == "asc")
+                {
+                    products = _mapper.Map<IEnumerable<ListProductsDTO>>(
+                        await _unitOfWork.Products.GetAllAsync(include:i=>
+                            i.Include(a=>a.ProductFiles), 
+                            take: take, 
+                            skip: take * skip,
+                            orderBy: i => i.OrderBy(p => p.Price)
+                        ));
+                }
+                */
                 var productsCount = await _unitOfWork.Products.GetCount();
                 return new ProductPageDTO
                 {
-                    ProductList = products,
+                    ProductList = _mapper.Map<IEnumerable<ListProductsDTO>>( await products.Include(a => a.ProductFiles).Skip(take * skip).Take(take).ToListAsync() ),
                     pages =  (productsCount / take) + 1
                 };
             }

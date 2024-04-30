@@ -41,5 +41,6 @@ namespace OnlineShop.Core.Interfaces
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
             bool IgnoreGlobalFilters = false
          );
+        Task<int> GetCount(Expression<Func<T, bool>>? expression=null);
     }
 }

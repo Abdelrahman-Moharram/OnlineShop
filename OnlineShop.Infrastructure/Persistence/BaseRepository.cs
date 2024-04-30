@@ -70,10 +70,11 @@ namespace OnlineShop.Core.Persistence
             if (selector != null)
                 query = query.Select(selector);
 
-            if (take.HasValue)
-                query = query.Take(take.Value);
             if (skip.HasValue)
                 query = query.Skip(skip.Value);
+
+            if (take.HasValue)
+                query = query.Take(take.Value);
             
             if (orderBy != null)
             {
@@ -159,6 +160,16 @@ namespace OnlineShop.Core.Persistence
             return await query.ToListAsync();
         }
 
-        
+        public async Task<int> GetCount(
+            Expression<Func<T, bool>>? expression = null
+            )
+        {
+            if(expression == null) 
+                return  await _entity.AsNoTracking().CountAsync();
+            return await _entity.AsNoTracking().Where(expression).CountAsync();
+        }
+
+
+
     }
 }

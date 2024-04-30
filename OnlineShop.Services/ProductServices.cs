@@ -6,6 +6,7 @@ using OnlineShop.Core.DTOs.ResponsesDTOs;
 using OnlineShop.Core.Entities;
 using OnlineShop.Core.Interfaces;
 using OnlineShop.Core.IServices;
+using System.Drawing;
 
 namespace OnlineShop.Services
 {
@@ -21,19 +22,25 @@ namespace OnlineShop.Services
             _mapper = mapper;
             _logger = logger;
         }
-        public async Task<IEnumerable<ListProductsDTO>> ListProducts(int take, int skip)
+        public async Task<ProductPageDTO> ListProducts(int take, int skip)
         {
             try
             {
                 
-                return _mapper.Map<IEnumerable<ListProductsDTO>>(
-                    await _unitOfWork.Products.GetAllAsync(include:i=>i.Include(a=>a.ProductFiles), take: take, skip: skip)
+                var products = _mapper.Map<IEnumerable<ListProductsDTO>>(
+                    await _unitOfWork.Products.GetAllAsync(include:i=>i.Include(a=>a.ProductFiles), take: take, skip: take * skip)
                     );
+                var productsCount = await _unitOfWork.Products.GetCount();
+                return new ProductPageDTO
+                {
+                    ProductList = products,
+                    pages =  (productsCount / take) + 1
+                };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return new List<ListProductsDTO>();
+                return new ProductPageDTO();
             }
         }
 

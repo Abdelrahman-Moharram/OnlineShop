@@ -21,12 +21,14 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpGet("top")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetTopCategories()
         {
             return Ok(await _categoryService.GetAllWithBaseIncludes(size: 10));
         }
 
         [HttpPost("add")]
+        [Authorize(Policy = "Permissions.Create.Category")]
         public async Task<IActionResult> Add([FromBody] AddCategoryDTO CategoryDTO)
         {
             if (ModelState.IsValid)

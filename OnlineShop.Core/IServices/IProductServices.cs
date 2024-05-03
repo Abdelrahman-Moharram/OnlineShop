@@ -12,6 +12,7 @@ namespace OnlineShop.Core.IServices
         Task<IEnumerable<ListProductsDTO>> GetProductByCategoryIdOrBrandId(string Id, string productId);
         Task<IEnumerable<ListProductsDTO>> Search(string query, int take = 5);
         Task<BaseResponseDTO> SeedProduct(SeedProductDTO productDTO, string CreatedBy);
+        Task<BaseResponseDTO> SeedProductItem(string createdBy);
         Task<BaseResponseDTO> AddProduct(FormProductDTO productDTO, List<ProductFile> uploadedFiles, string CreatedBy);
     }
 }

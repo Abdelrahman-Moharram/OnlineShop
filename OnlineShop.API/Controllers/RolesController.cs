@@ -19,7 +19,7 @@ namespace OnlineShop.API.Controllers
 
         // List of roles
 
-        [Authorize(Roles= "Basic, Admin, SuperAdmin")]
+        [Authorize(Policy = "Permissions.Read.Accounts")]
         [HttpGet("")]
         public async Task<IActionResult> AllRoles()
         {
@@ -29,7 +29,7 @@ namespace OnlineShop.API.Controllers
 
 
         // add new role
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "Permissions.Create.Accounts")]
         [HttpPost("Add")]
         public async Task<IActionResult> AddRole([FromBody] RoleDTO roleDTO)
         {
@@ -47,7 +47,7 @@ namespace OnlineShop.API.Controllers
 
         // remove role
 
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "Permissions.Delete.Accounts")]
         [HttpPost("Remove")]
         public async Task<IActionResult> RemoveRole([FromBody] RoleDTO roleDTO)
         {
@@ -62,16 +62,8 @@ namespace OnlineShop.API.Controllers
         }
 
 
-        
-
-        
-
-
-
-
-
         // add Add User to Role
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "Permissions.Update.Accounts")]
         [HttpPost("Users/Add")]
         public async Task<IActionResult> AddUserRole([FromBody] AddUserToRoleDTO roleDTO)
         {
@@ -86,7 +78,7 @@ namespace OnlineShop.API.Controllers
         }
 
         // Remove User from Role
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "Permissions.Update.Accounts")]
         [HttpPost("Users/Remove")]
         public async Task<IActionResult> RemoveUserRole([FromBody] AddUserToRoleDTO roleDTO)
         {
@@ -101,6 +93,5 @@ namespace OnlineShop.API.Controllers
         }
 
         
-
     }
 }

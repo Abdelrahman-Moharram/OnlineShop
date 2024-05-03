@@ -7,8 +7,8 @@ using OnlineShop.Core.Entities;
 using OnlineShop.Core.Interfaces;
 using OnlineShop.Core.IServices;
 using OnlineShop.Infrastructure.Data;
-using System.Drawing;
-using System.Linq;
+using System.Security.Cryptography;
+
 
 namespace OnlineShop.Services
 {
@@ -31,14 +31,14 @@ namespace OnlineShop.Services
             {
                 IQueryable<Product> products = _context.Products;
                 if (sort == "asc")
-                    products = products.OrderBy(i => i.Price);
+                    products = products.OrderBy(i => (i.Price - (i.Price * i.discount / 100)));
                 else if(sort == "des")
-                    products = products.OrderByDescending(i => i.Price);
+                    products = products.OrderByDescending(i => (i.Price - (i.Price * i.discount / 100)));
 
                 if(minprice != null)
-                    products = products.Where(i=>i.Price > minprice);
+                    products = products.Where(i=> (i.Price - (i.Price * i.discount / 100)) > minprice);
                 if(maxprice != null)
-                    products = products.Where(i => i.Price < maxprice);
+                    products = products.Where(i => (i.Price - (i.Price * i.discount / 100)) < maxprice);
 
                 /*if (sort == "asc")
                 {
@@ -54,8 +54,10 @@ namespace OnlineShop.Services
                 var productsCount = await _unitOfWork.Products.GetCount();
                 return new ProductPageDTO
                 {
-                    ProductList = _mapper.Map<IEnumerable<ListProductsDTO>>( await products.Include(a => a.ProductFiles).Skip(take * skip).Take(take).ToListAsync() ),
-                    pages =  (productsCount / take) + 1
+                    ProductList = _mapper.Map<IEnumerable<ListProductsDTO>>(await products.Include(a => a.ProductFiles).Skip(take * skip).Take(take).ToListAsync()),
+                    pages =  (productsCount / take) + 1,
+                    minPrice = _context.Products.Min(i => (i.Price - (i.Price * i.discount / 100))),
+                    maxPrice = _context.Products.Max(i => (i.Price - (i.Price * i.discount / 100)))
                 };
             }
             catch (Exception ex)
@@ -210,7 +212,37 @@ namespace OnlineShop.Services
 
         }
 
-        
+        public async Task<BaseResponseDTO> SeedProductItem(string createdBy)
+        {
+            Random rnd = new Random();
+            var randomNumber = new byte[8];
+            
+            
+
+            foreach (var item in await _unitOfWork.Products.GetAllAsync())
+            {
+                 for (var i = 0; i < rnd.Next(10);  i++)
+                {
+                    using var generator = RandomNumberGenerator.Create();
+                    generator.GetBytes(randomNumber);
+
+                    await _unitOfWork.ProductItems.AddAsync(new ProductItem
+                    {
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = createdBy,
+                        ProductId = item.Id,
+                        SerialNo = Convert.ToBase64String(randomNumber),
+                    });
+                }
+
+            }
+            await _unitOfWork.SaveAsync();
+            return new BaseResponseDTO 
+            {
+                IsSuccessed = true,
+                Message = "Product items Seeds Successfully !"
+            };
+        }
         
     }
 }

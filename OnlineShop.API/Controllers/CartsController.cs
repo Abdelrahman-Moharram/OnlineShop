@@ -9,7 +9,6 @@ namespace OnlineShop.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class CartsController : ControllerBase
     {
         private readonly ICartServices _cartServices;
@@ -19,6 +18,7 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpGet("")]
+        [Authorize(Policy = "Permissions.Read.Cart")]
         public async Task<IActionResult> GetCartWithItem()
         {
             var userId = User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value;
@@ -28,6 +28,7 @@ namespace OnlineShop.API.Controllers
         // AddCartDTO(BaseCartItemDTO cartDTO, string userId)
 
         [HttpPost("update")]
+        [Authorize(Policy = "Permissions.Update.CartItem")]
         public async Task<IActionResult> UpdateCart([FromBody] BaseCartItemDTO cartDTO)
         {
             if(ModelState.IsValid)
@@ -42,6 +43,7 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize(Policy = "Permissions.Update.CartItem")]
         public async Task<IActionResult> DeleteCartItem([FromRoute] string id)
         {
             var response = await _cartServices.DeleteCartItem(id, User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value);

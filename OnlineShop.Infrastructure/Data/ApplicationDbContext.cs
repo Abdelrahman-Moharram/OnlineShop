@@ -37,11 +37,16 @@ namespace OnlineShop.Infrastructure.Data
 
             new CategoryConfigurations().Configure(builder.Entity<Category>());
             new ProductConfigurations().Configure(builder.Entity<Product>());
+            new OrderConfigurations().Configure(builder.Entity<Order>());
 
             // ProductsInventoryConfigurations -> included in ProductConfigurations 
 
             new ProductItemConfigurations().Configure(builder.Entity<ProductItem>());
             new BrandsConfigurations().Configure(builder.Entity<Brand>());
+
+            builder.Entity<OrderItem>()
+                .HasQueryFilter(i => !i.IsDeleted);
+
 
             builder.Entity<ProductFile>()
                 .HasOne(i => i.Product)

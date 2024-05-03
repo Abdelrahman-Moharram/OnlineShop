@@ -10,6 +10,7 @@ using System.Security.Claims;
 
 using OnlineShop.Core.DTOs.ResponsesDTOs;
 using Microsoft.EntityFrameworkCore;
+using OnlineShop.Core.Constants;
 
 namespace OnlineShop.Services
 {
@@ -119,8 +120,60 @@ namespace OnlineShop.Services
         {
             return await _roleManager.Roles.Select(i => new SimpleModule { Name = i.Name, Id = i.Id }).ToListAsync();
         }
-        
 
-        
+        public async Task<BaseResponseDTO> AddRoleWithPermissions(string roleName, string[] Permissions)
+        {
+            IdentityRole role = await _roleManager.FindByNameAsync(roleName);
+            if (role == null)
+            {
+                role = new IdentityRole { Name = roleName };
+                var result = await _roleManager.CreateAsync(role);
+            }
+
+            if (role != null)
+            {
+                foreach (var permission in Permissions)
+                    await _roleManager.AddClaimAsync(role, new Claim(CommonConstantns.Permissions.ToString(), permission));
+
+                return new BaseResponseDTO { Message = $"{roleName} Added Successfully" };
+            }
+
+            _logger.LogError($"something went wrong while adding {roleName} Role");
+            return new BaseResponseDTO { Message = $"something went wrong while adding {roleName} Role" };
+        }
+
+
+        public async Task<List<string>> GetRoleClaimsPermissions(string roleNameOrRoleId)
+        {
+            var role = _roleManager.FindByIdAsync(roleNameOrRoleId).Result;
+            if (role == null)
+                role = _roleManager.FindByNameAsync(roleNameOrRoleId).Result;
+
+            if (role == null)
+                return null;
+
+            return _roleManager.GetClaimsAsync(role).Result.Where(i => i.Type == CommonConstantns.Permissions.ToString()).Select(i => i.Value).ToList();
+        }
+
+
+        public async Task<List<string>> EditRoleClaimsPermissions(RolePermissionsDTO permissionsDTO)
+        {
+            var role = _roleManager.FindByIdAsync(permissionsDTO.RoleId).Result;
+            if (role == null)
+                return null;
+            foreach (var claim in _roleManager.GetClaimsAsync(role).Result)
+            {
+                if (permissionsDTO.Permissions.FirstOrDefault(p => p.ToLower() == claim.Value.ToLower()) == null)
+                    await _roleManager.RemoveClaimAsync(role, claim);
+                else
+                    permissionsDTO.Permissions.Remove(claim.Value);
+            }
+            foreach (var permission in permissionsDTO.Permissions)
+                await _roleManager.AddClaimAsync(role, new Claim(CommonConstantns.Permissions.ToString(), permission));
+
+
+            return _roleManager.GetClaimsAsync(role).Result.Where(i => i.Type == CommonConstantns.Permissions.ToString()).Select(i => i.Value).ToList();
+        }
+
     }
 }

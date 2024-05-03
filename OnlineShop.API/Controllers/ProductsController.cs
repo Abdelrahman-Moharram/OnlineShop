@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Core.DTOs.ProductsDTOs;
 using OnlineShop.Core.DTOs.ResponsesDTOs;
@@ -9,6 +10,7 @@ namespace OnlineShop.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ProductsController : ControllerBase
     {
         private readonly IProductServices _productServices;
@@ -30,6 +32,7 @@ namespace OnlineShop.API.Controllers
 
 
         [HttpPost("add")]
+        [Authorize(Policy = "Permissions.Create.Product")]
         public async Task<IActionResult> AddProduct([FromForm] FormProductDTO productDTO)
         {
             if(ModelState.IsValid)
@@ -47,6 +50,7 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpPost("seed-product")]
+        [Authorize(Policy = "Permissions.Create.Product")]
         public async Task<IActionResult> ProductSeeding([FromBody] SeedProductDTO productDTO)
         {
             if (ModelState.IsValid)
@@ -70,6 +74,12 @@ namespace OnlineShop.API.Controllers
         public async Task<IActionResult> GetProductByCategoryOrBrand([FromQuery] string id, [FromQuery] string productid)
             => Ok(await _productServices.GetProductByCategoryIdOrBrandId(id, productid));
 
+
+        [HttpGet("seed-product-item")]
+        [Authorize(Policy = "Permissions.Create.ProductItem")]
+        public async Task<IActionResult> SeedProductItems()
+            =>Ok(await _productServices.SeedProductItem(User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value));
+        
 
     }
 }

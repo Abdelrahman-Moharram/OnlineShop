@@ -18,21 +18,17 @@ namespace OnlineShop.API.Controllers
             _adminServices = adminServices;
         }
         [HttpPost("add-banner-images")]
-        [Authorize(Roles ="SuperAdmin")]
+        [Authorize(Policy = "Permissions.Create.SiteSettings")]
         public async Task<IActionResult> AddBannerImages([FromForm] List<IFormFile> files)
         {
             if (ModelState.IsValid)
             {
-                var userId = User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value;
-
                 FileUpload fileUpload = new FileUpload();
                 List<Banner> Banners =  fileUpload.UploadBannerImages(files);
-                BaseResponseDTO response =  await _adminServices.AddBannerImages(Banners, userId);
+                BaseResponseDTO response =  await _adminServices.AddBannerImages(Banners, User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value);
                 if (response.IsSuccessed) 
                     return Ok(response);
-                
                 return BadRequest(response);
-                
             }
             return BadRequest(ModelState);
         }

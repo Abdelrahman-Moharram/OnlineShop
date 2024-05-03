@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Core.DTOs.BrandDTOs;
 using OnlineShop.Core.DTOs.ResponsesDTOs;
@@ -21,12 +21,14 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpGet("top")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetTopBrands()
         {
             return Ok(await _brandService.GetAllWithBaseIncludes(size: 10));
         }
 
         [HttpPost("add")]
+        [Authorize(Policy = "Permissions.Create.Brand")]
         public async Task<IActionResult> Add([FromBody] AddBrandDTO BrandDTO)
         {
             if (ModelState.IsValid)

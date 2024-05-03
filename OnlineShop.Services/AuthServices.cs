@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using OnlineShop.Core.Constants;
 using OnlineShop.Core.DTOs.AuthDTOs;
 using OnlineShop.Core.DTOs.ResponsesDTOs;
 using OnlineShop.Core.Entities;
@@ -24,14 +25,15 @@ namespace OnlineShop.Services
         private readonly JWTSettings _jwt;
         private readonly ILogger<AuthServices> _logger;
         private readonly IUnitOfWork _unitOfWork;
-
-        public AuthServices(UserManager<ApplicationUser> userManager, IOptions<JWTSettings> jwt, ILogger<AuthServices> logger, IUnitOfWork unitOfWork)
+        private readonly IRoleServices _roleServices;
+        public AuthServices(UserManager<ApplicationUser> userManager, IOptions<JWTSettings> jwt, ILogger<AuthServices> logger, IUnitOfWork unitOfWork, IRoleServices roleServices)
         {
 
             _userManager = userManager;
             _logger = logger;
             _jwt = jwt.Value;
             _unitOfWork = unitOfWork;
+            _roleServices = roleServices;
         }
 
 
@@ -222,9 +224,9 @@ namespace OnlineShop.Services
             foreach (var role in roles)
             {
                 roleClaims.Add(new Claim("roles", role));
-                /*foreach (var claim in _roleService.GetRoleClaimsPermissions(role).Result)
+                foreach (var claim in _roleServices.GetRoleClaimsPermissions(role).Result)
                     if (roleClaims.FirstOrDefault(i => i.Value == claim) == null)
-                        roleClaims.Add(new Claim(OtherConstants.Permissions.ToString(), claim));*/
+                        roleClaims.Add(new Claim(CommonConstantns.Permissions.ToString(), claim));
             }
 
 

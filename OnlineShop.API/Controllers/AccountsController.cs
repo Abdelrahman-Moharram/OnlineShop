@@ -70,7 +70,7 @@ namespace OnlineShop.API.Controllers
             return Ok(result);
         }
         
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("revoke-token")]
         public async Task<IActionResult> RevokeToken()
         {

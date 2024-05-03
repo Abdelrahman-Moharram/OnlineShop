@@ -19,7 +19,6 @@ namespace OnlineShop.Core.Configurations
                 .HasDefaultValueSql("GetDate()");
 
 
-
             builder
                 .HasOne(i => i.Product)
                 .WithMany(ii => ii.ProductItems)
@@ -28,8 +27,14 @@ namespace OnlineShop.Core.Configurations
 
 
             builder
+                .HasOne(i => i.Order)
+                .WithMany(ii => ii.ProductItems)
+                .HasForeignKey(i => i.OrderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder
                 .HasQueryFilter(i => !i.IsDeleted)
-                .HasQueryFilter(ii => !ii.IsSelled);
+                .HasQueryFilter(i => !i.IsSelled);
 
         }
     }

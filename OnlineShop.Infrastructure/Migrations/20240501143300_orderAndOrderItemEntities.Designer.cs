@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineShop.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using OnlineShop.Infrastructure.Data;
 namespace OnlineShop.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240501143300_orderAndOrderItemEntities")]
+    partial class orderAndOrderItemEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -469,8 +472,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductItemId")
-                        .IsUnique();
+                    b.HasIndex("ProductItemId");
 
                     b.ToTable("OrderItem");
                 });
@@ -833,8 +835,8 @@ namespace OnlineShop.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("OnlineShop.Core.Entities.ProductItem", "ProductItem")
-                        .WithOne("OrderItem")
-                        .HasForeignKey("OnlineShop.Core.Entities.OrderItem", "ProductItemId")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ProductItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -940,8 +942,7 @@ namespace OnlineShop.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineShop.Core.Entities.ProductItem", b =>
                 {
-                    b.Navigation("OrderItem")
-                        .IsRequired();
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("OnlineShop.Core.Entities.SiteSetting", b =>

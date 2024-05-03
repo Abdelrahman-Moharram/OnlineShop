@@ -13,6 +13,8 @@ namespace OnlineShop.Infrastructure.Persistence
         public IRepository<Product> Products { get; private set; }
         public IRepository<Category> Categories { get; private set; }
         public IRepository<Brand> Brands { get; private set;}
+        public IRepository<Order> Orders { get; private set; }
+        public IRepository<OrderItem> OrderItems { get; private set; }
         public IRepository<ProductItem> ProductItems { get; private set; }
         public IRepository<ProductFile> ProductFiles { get; private set; }
         public IRepository<Banner> Banners { get; private set; }
@@ -20,7 +22,7 @@ namespace OnlineShop.Infrastructure.Persistence
         public IRepository<SiteSetting> SiteSettings { get; private set; }
         public IRepository<Cart> Carts { get; private set; }
         public IRepository<CartItem> CartItems { get; private set; }
-
+        
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -44,6 +46,9 @@ namespace OnlineShop.Infrastructure.Persistence
             Carts = new BaseRepository<Cart>(_context);
 
             CartItems = new BaseRepository<CartItem>(_context);
+
+            Orders = new BaseRepository<Order> (_context);
+            OrderItems = new BaseRepository<OrderItem> (_context);
         }
 
         public async Task<int> SaveAsync()

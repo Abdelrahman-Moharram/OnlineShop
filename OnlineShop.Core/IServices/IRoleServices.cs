@@ -17,5 +17,10 @@ namespace OnlineShop.Core.IServices
         Task<BaseResponseDTO> AddRole(string roleName);
         Task<BaseResponseDTO> RemoveRole(string roleName);
         Task<List<SimpleModule>> AllRoles();
+        Task<BaseResponseDTO> AddRoleWithPermissions(string roleName, string[] Permissions);
+        Task<List<string>> GetRoleClaimsPermissions(string roleNameOrRoleId);
+        Task<List<string>> EditRoleClaimsPermissions(RolePermissionsDTO permissionsDTO);
+
+
     }
 }

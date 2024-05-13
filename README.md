@@ -1,2 +1,4 @@
-# Notes
-- always Core added in all other projects but no project added to core (Single Dependency for core)
+
+
+https://github.com/Abdelrahman-Moharram/OnlineShop/assets/41553398/bd57e0a9-5460-445c-a906-242948c94ebd
+

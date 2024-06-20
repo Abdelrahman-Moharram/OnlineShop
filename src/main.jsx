@@ -19,6 +19,7 @@ import Logout from './Pages/Auth/Logout.jsx';
 
 import ProductDetails from './Pages/Products/ProductDetails.jsx';
 import ProductsList from './Pages/Home/ProductsList.jsx';
+import Cart from './Pages/Home/Cart.jsx';
 
 const router = createBrowserRouter ([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter ([
       {
         index:true,
         element:<Index />
+      },
+      {
+        path:'/cart',
+        element:<Cart />
       },
       {
         path:"/Products",

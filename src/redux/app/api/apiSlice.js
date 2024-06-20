@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+
 const baseQuery = fetchBaseQuery({
     baseUrl:import.meta.env.VITE_BASE_URL,
     credentials:'include',

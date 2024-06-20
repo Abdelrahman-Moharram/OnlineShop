@@ -12,7 +12,7 @@ const ProductsList = () => {
   const [size, setSize] = useState(params.get('size') ?? 24)
   const [page, setPage] = useState(params.get('page') ?? 1)
   const [sort, setSort] = useState(params.get('sort') ?? '')
-  const [minprice, setMinprice] = useState(params.get('minprice') ?? '')
+  const [minprice, setMinprice] = useState(params.get('minprice') ??  '')
   const [maxprice, setMaxprice] = useState(params.get('maxprice') ?? '')
 
   const handleSize =(val)=>{
@@ -23,8 +23,12 @@ const ProductsList = () => {
     }
   }
   const handlePage =(val)=>{
-    if(val.match(/^[0-9]+$/))
+    console.log(val);
+    if(!isNaN(val)){
       setPage(val)
+    }
+    else if(val.match(/^[0-9]+$/))
+      setPage(parseInt(val))
     else{
       toast.error("invalid page filter")
     }
@@ -32,23 +36,27 @@ const ProductsList = () => {
   const handleSort = (val) => {
     setSort(val)
   }
-  const handleMinprice =(val)=>{
-    console.log(val);
-    if(val.match(/^[0-9]+$/))
-      setMinprice(parseFloat(val))
-    else if(val == '')
-      setMinprice(val)
-    else
-      toast.error("invalid page filter")
 
-  }
-  const handleMaxprice =(val)=>{
-    if(val.match(/^[0-9]+$/))
-      setMaxprice(parseFloat(val))
-    else if(val == '')
-      setMaxprice(val)
+  const handlePriceFilter =({min, max})=>{
+    if(!isNaN(min))
+      setMinprice(min)
+    else if(min.match(/^[0-9]+$/))
+      setMinprice(parseFloat(min))
+    else if(min == '')
+      setMinprice(min)
     else
-      toast.error("invalid page filter")
+      toast.error("invalid min value")
+
+    if(!isNaN(max))
+      setMaxprice(max)
+    else if(max.match(/^[0-9]+$/))
+      setMaxprice(parseFloat(max))
+    else if(max == '')
+      setMaxprice(max)
+    else
+      toast.error("invalid max value")
+
+      console.log(min, max);
   }
 
   useEffect(()=>{
@@ -63,6 +71,11 @@ const ProductsList = () => {
    
   const {data, isLoading} = useProductListQuery({take:size, skip:page-1, sort, minprice, maxprice}, {refetchOnMountOrArgChange:true})
 
+  useEffect(()=>{
+    setMinprice(data?.minPrice)
+    setMaxprice(data?.maxPrice)
+  },[isLoading])
+
   return (
     <div>
       {
@@ -73,8 +86,7 @@ const ProductsList = () => {
             title={"All Products"} 
             handleSize={handleSize}
             handleSort={handleSort}
-            handleMinprice={handleMinprice}
-            handleMaxprice={handleMaxprice}
+            handlePriceFilter={handlePriceFilter}
             size={size} 
             data={data?.productList} 
             sort={sort} 

@@ -15,8 +15,7 @@ const DetailedProductsCollection = ({
   maxprice,
   handleSize,
   handleSort,
-  handleMinprice,
-  handleMaxprice,
+  handlePriceFilter
 }) => {
   return (
     
@@ -24,11 +23,6 @@ const DetailedProductsCollection = ({
   <div className="mx-auto max-w-screen-xl px-4 py-5 sm:px-6 lg:px-8">
     <header>
       <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">{title}</h2>
-
-      {/* <p className="mt-4 max-w-md text-gray-500">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque praesentium cumque iure
-        dicta incidunt est ipsam, officia dolor fugit natus?
-      </p> */}
     </header>
 
     <div className="mt-8 sm:flex sm:items-center sm:justify-between">
@@ -41,7 +35,7 @@ const DetailedProductsCollection = ({
           </details>
         </div>
 
-        <PriceFilter minprice={minprice} maxprice={maxprice} handleMinprice={handleMinprice} handleMaxprice={handleMaxprice} />
+        <PriceFilter minprice={minprice} maxprice={maxprice} handlePriceFilter={handlePriceFilter} />
       </div>
 
       <div className='flex gap-3'>

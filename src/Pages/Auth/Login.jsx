@@ -5,6 +5,7 @@ import { ImSpinner3 } from 'react-icons/im'
 import Cookies from 'js-cookie'
 import { setAuth } from '../../redux/features/Auth/authSlice'
 import { useDispatch } from 'react-redux'
+import GoogleAuth from '../../Components/ThirdPartyAuth/GoogleAuth'
 const Login = () => {
     const nav = useNavigate()
 
@@ -36,7 +37,7 @@ const Login = () => {
 
   return (
     <div className="h-screen">
-
+        <GoogleAuth />
 
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-lg">

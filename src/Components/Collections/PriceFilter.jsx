@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const PriceFilter = ({minprice, maxprice, handleMinprice, handleMaxprice}) => {
+const PriceFilter = ({minprice, maxprice, handlePriceFilter}) => {
+  const [prices, setPrices] = useState({
+    minprice:minprice,
+    maxprice: maxprice
+  })
   return (
     <div className="relative z-[1]">
           <details className="group [&_summary::-webkit-details-marker]:hidden">
@@ -38,8 +42,7 @@ const PriceFilter = ({minprice, maxprice, handleMinprice, handleMaxprice}) => {
                     type="button" 
                     className="text-sm text-gray-900 underline underline-offset-4"
                     onClick={()=>{
-                      handleMinprice('')
-                      handleMaxprice('')
+                      setPrices((prev)=>({...prev, minprice:'', maxprice:''}))
                     }}
                   >
                     Reset
@@ -56,8 +59,8 @@ const PriceFilter = ({minprice, maxprice, handleMinprice, handleMaxprice}) => {
                         id="FilterPriceFrom"
                         placeholder="From"
                         className="w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
-                        value={minprice}
-                        onChange={(e)=>handleMinprice(e.target.value)}
+                        value={prices.minprice ?? minprice}
+                        onChange={(e)=>setPrices((prev)=>({...prev, minprice:e.target.value}))}
                       />
                     </label>
 
@@ -69,10 +72,20 @@ const PriceFilter = ({minprice, maxprice, handleMinprice, handleMaxprice}) => {
                         id="FilterPriceTo"
                         placeholder="To"
                         className="w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
-                        value={maxprice}
-                        onChange={(e)=>handleMaxprice(e.target.value)}
+                        value={prices.maxprice ?? maxprice}
+                        onChange={(e)=>setPrices((prev)=>({...prev, maxprice:e.target.value}))}
                       />
                     </label>
+                  </div>
+
+                  <div className='flex justify-end mt-4'>
+                    <button
+                      className="inline-block rounded border transition-colors  border-black bg-black px-4 py-1.5 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                      onClick={()=>handlePriceFilter({min:prices.minprice??minprice, max:prices.maxprice??maxprice})}
+                    >
+                      apply
+                    </button>
+
                   </div>
                 </div>
               </div>

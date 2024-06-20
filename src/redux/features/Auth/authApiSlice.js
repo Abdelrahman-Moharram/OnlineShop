@@ -21,9 +21,18 @@ export const authApiSlice = apiSlice.injectEndpoints({
         }),
         refreshToken: builder.query({
             query:()=>{
-                console.log("revoking...");
                 return {
                     url:'/api/accounts/refresh-token'
+                }
+            }
+        }),
+        googleLogin: builder.mutation({
+            query:({token})=>{
+                return {
+                    url:`/api/accounts/google?token=${token}`,
+                    headers:{
+                        "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+                    },
                 }
             }
         }),
@@ -39,5 +48,6 @@ export const {
     useRegisterMutation,
     useLoginMutation,
     useLogoutQuery,
-    useRefreshTokenQuery
+    useRefreshTokenQuery,
+    useGoogleLoginMutation
 } = authApiSlice

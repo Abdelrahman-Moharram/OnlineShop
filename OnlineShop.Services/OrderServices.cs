@@ -34,6 +34,11 @@ namespace OnlineShop.Services
 
             try
             {
+                if (cart.CartItems.Count == 0)
+                    return new BaseResponseDTO
+                    {
+                        Message = "User Cart Has no Items"
+                    };
                 Order newOrder = new Order
                 {
                     CreatedBy = userId,
@@ -41,11 +46,7 @@ namespace OnlineShop.Services
                     CustomerId = userId,
                     OrderItems = new List<OrderItem>()
                 };
-                if (cart.CartItems.Count == 0)
-                    return new BaseResponseDTO
-                    {
-                        Message = "User Cart Has no Items"
-                    };
+                
                 foreach (var item in cart.CartItems)
                 {
 

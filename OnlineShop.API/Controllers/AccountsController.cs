@@ -57,7 +57,7 @@ namespace OnlineShop.API.Controllers
         [HttpGet("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
-            var refreshToken = Request.Cookies["user_refresh_token"];
+            var refreshToken = Request.Cookies["refresh_token"];
             if (string.IsNullOrEmpty(refreshToken))
             {
                 return Unauthorized();
@@ -74,7 +74,7 @@ namespace OnlineShop.API.Controllers
         [HttpGet("revoke-token")]
         public async Task<IActionResult> RevokeToken()
         {
-            var refreshToken = Request.Cookies["user_refresh_token"];
+            var refreshToken = Request.Cookies["refresh_token"];
             if (string.IsNullOrEmpty(refreshToken))
             {
                 return Unauthorized(new BaseResponseDTO
@@ -104,7 +104,7 @@ namespace OnlineShop.API.Controllers
                 IsEssential = true,
             };
 
-            Response.Cookies.Append("user_refresh_token", RToken, cookieOptions);
+            Response.Cookies.Append("refresh_token", RToken, cookieOptions);
         }
     }
 }

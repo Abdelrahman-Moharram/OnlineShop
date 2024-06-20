@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Core.DTOs.AuthDTOs;
+using OnlineShop.Core.DTOs.ResponsesDTOs;
 using OnlineShop.Core.IServices;
 
 namespace OnlineShop.API.Controllers
@@ -27,6 +28,15 @@ namespace OnlineShop.API.Controllers
         }
 
 
+        [Authorize(Policy = "Permissions.Read.Accounts")]
+        [HttpGet("{roleId}")]
+        public async Task<IActionResult> GetRolePermissions([FromRoute] string roleId)
+        {
+            var roles =  await _roleService.GetRoleClaimsPermissions(roleId);
+            if (roles == null) 
+                return NotFound(new BaseResponseDTO { IsSuccessed = false, Message = "this role is not found"});
+            return Ok(roles);
+        }
 
         // add new role
         [Authorize(Policy = "Permissions.Create.Accounts")]
@@ -92,6 +102,8 @@ namespace OnlineShop.API.Controllers
             return BadRequest(ModelState);
         }
 
+
         
+
     }
 }

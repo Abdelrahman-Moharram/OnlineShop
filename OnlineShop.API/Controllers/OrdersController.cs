@@ -20,9 +20,9 @@ namespace OnlineShop.API.Controllers
             _orderServices = orderServices;
         }
 
-        [HttpPost("add")]
+        [HttpPost("checkout")]
         [Authorize(Policy = "Permissions.Create.Order")]
-        public async Task<IActionResult> MakeOrder(AddOrderDTO orderDTO)
+        public async Task<IActionResult> Checkout()
         {
             BaseResponseDTO response = await _orderServices.PlaceOrder(User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value);
             if(response.IsSuccessed)

@@ -216,8 +216,13 @@ namespace OnlineShop.Services
         {
             Random rnd = new Random();
             var randomNumber = new byte[8];
-            
-            
+            if (string.IsNullOrEmpty(createdBy))
+                return new BaseResponseDTO
+                {
+                    IsSuccessed = false,
+                    Message = "Invalid User"
+                };
+
 
             foreach (var item in await _unitOfWork.Products.GetAllAsync())
             {

@@ -10,7 +10,6 @@ namespace OnlineShop.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class ProductsController : ControllerBase
     {
         private readonly IProductServices _productServices;
@@ -21,12 +20,16 @@ namespace OnlineShop.API.Controllers
             _productServices = productServices;
             _logger = logger;
         }
+
         [HttpGet("")]
+        [AllowAnonymous]
         public async Task<IActionResult> ProductList([FromQuery] int take, [FromQuery] int skip, string? sort, decimal? minprice, decimal? maxprice) 
             => Ok(await _productServices.ListProducts(take, skip, sort, minprice, maxprice));
         
         
         [HttpGet("{id}")]
+        [AllowAnonymous]
+
         public async Task<IActionResult> ProductDetails(string id)
             => Ok(await _productServices.ProductDetails(id));
 
@@ -67,10 +70,14 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpGet("search")]
+        [AllowAnonymous]
+
         public async Task<IActionResult> SearchProduct([FromQuery] string query)
             => Ok(await _productServices.Search(query, take: 5));
 
         [HttpGet("suggestions-category-brand")]
+        [AllowAnonymous]
+
         public async Task<IActionResult> GetProductByCategoryOrBrand([FromQuery] string id, [FromQuery] string productid)
             => Ok(await _productServices.GetProductByCategoryIdOrBrandId(id, productid));
 
@@ -78,7 +85,11 @@ namespace OnlineShop.API.Controllers
         [HttpGet("seed-product-item")]
         [Authorize(Policy = "Permissions.Create.ProductItem")]
         public async Task<IActionResult> SeedProductItems()
-            =>Ok(await _productServices.SeedProductItem(User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value));
+        {
+            var userId = User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value;
+            return Ok(await _productServices.SeedProductItem(User.Claims.FirstOrDefault(i => i.Type == "userId")?.Value));
+
+        }
         
 
     }

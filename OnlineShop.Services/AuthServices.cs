@@ -11,7 +11,6 @@ using OnlineShop.Core.Interfaces;
 using OnlineShop.Core.IServices;
 using OnlineShop.Core.Settings;
 using OnlineShop.Infrastructure.Helper;
-using OnlineShop.Infrastructure.Persistence;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
